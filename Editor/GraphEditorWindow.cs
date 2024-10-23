@@ -248,7 +248,7 @@ namespace SimpleGraph
             GameObject nodeObject = new GameObject(nodeName);
             nodeObject.transform.SetParent(nodesParent.transform);
             GraphNode newNode = nodeObject.AddComponent<GraphNode>();
-            newNode.windowRect = new Rect(position.x, position.y, 200, 100);
+            newNode.windowRect = new Rect(position.x, position.y, 200, 150);
             newNode.nodeName = nodeName;
             GraphUtility.nodes.Add(newNode);
             return newNode;
