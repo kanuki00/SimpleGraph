@@ -9,6 +9,7 @@ namespace SimpleGraph
     {
         private Vector2 scrollPos;
         private GameObject nodesParent;
+        
         private bool isConnecting = false;
         private GraphNode startNode = null;
         private float zoomFactor = 1.0f; // Add zoom factor
@@ -23,9 +24,10 @@ namespace SimpleGraph
 
         private void OnEnable()
         {
+            nodesParent = GameObject.Find("SimpleGraphNodes");
             if (nodesParent == null)
             {
-                nodesParent = new GameObject("NodesParent");
+                nodesParent = new GameObject("SimpleGraphNodes");
             }
 
             string path = Application.persistentDataPath + "/NodeGraph.json";
@@ -265,8 +267,8 @@ namespace SimpleGraph
 
         private void DrawNodeCurve(Rect start, Rect end)
         {
-            Vector3 startPos = new Vector3(start.x + start.width, start.y + start.height / 2, 0);
-            Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0);
+            Vector3 startPos = new Vector3(start.x + start.width, start.y + (start.height / 2), 0); // Start from the right center
+            Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0); // End at the left center
             Vector3 startTangent = startPos + Vector3.right * 50;
             Vector3 endTangent = endPos + Vector3.left * 50;
 
