@@ -40,6 +40,12 @@ namespace SimpleGraph
             onCompletionEvent?.Invoke(this);
         }
 
+        public void UpdateCompletionState(bool completed)
+        {
+            isCompleted = completed;
+            TriggerCompletionEvent();
+        }
+
         public virtual void DrawConnectionPoints()
         {
             // Calculate positions for the buttons
@@ -96,7 +102,6 @@ namespace SimpleGraph
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            // Display the status
 
             GUILayout.EndVertical();
 
@@ -106,7 +111,6 @@ namespace SimpleGraph
 
         private void UpdateNodeNameInHierarchy()
         {
-            // Assuming this script is attached to a GameObject
             this.gameObject.name = nodeName;
         }
     }
