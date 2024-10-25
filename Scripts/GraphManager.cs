@@ -53,9 +53,18 @@ namespace SimpleGraph {
         {
             foreach (GraphNode nextNode in node.nextNodes)
             {
-                nextNode.isActive = true;
-                Debug.Log("Node " + nextNode.nodeName + " is now active.");
+                if (nextNode.nodeName == "InverterNode")
+                {
+                    nextNode.isActive = !node.isActive;
+                    Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isActive);
+                }
+                else
+                {
+                    nextNode.isActive = true;
+                    Debug.Log("Node " + nextNode.nodeName + " is now active.");
+                }
             }
         }
     }
 }
+

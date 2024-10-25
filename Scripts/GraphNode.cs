@@ -46,10 +46,8 @@ namespace SimpleGraph
             float buttonWidth = 20;
             float buttonHeight = 20;
             float inButtonX = windowRect.width - buttonWidth; // 10 pixels from the right edge
-            //float inButtonY = 10;
             float inButtonY = (windowRect.height / 2) - (buttonHeight / 2); // Centered vertically
             float outButtonX = 0; // 10 pixels from the left edge
-            //float outButtonY = 10;
             float outButtonY = (windowRect.height / 2) - (buttonHeight / 2); // Centered vertically
 
             // Draw "In" button
@@ -64,6 +62,7 @@ namespace SimpleGraph
             {
                 Debug.Log("Out button clicked on node: " + nodeName);
                 OnSetEndNode?.Invoke(this);
+                
             }
         }
 
