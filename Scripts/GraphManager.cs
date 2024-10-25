@@ -42,6 +42,7 @@ namespace SimpleGraph {
             {
                 if (!previousNode.isCompleted)
                 {
+                    
                     return false;
                 }
             }
