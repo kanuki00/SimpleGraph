@@ -64,8 +64,7 @@ namespace SimpleGraph
             GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one * zoomFactor);
 
             // Draw the grid
-            DrawGrid(20 * zoomFactor, 0.2f, Color.green);
-            DrawGrid(100 * zoomFactor, 0.4f, Color.red);
+            //DrawGrid(20 * zoomFactor, 0.2f, Color.green);
 
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
             BeginWindows();
@@ -75,12 +74,6 @@ namespace SimpleGraph
             }
             EndWindows();
             EditorGUILayout.EndScrollView();
-
-            // Draw connection points after the windows
-            for (int i = 0; i < GraphUtility.nodes.Count; i++)
-            {
-                GraphUtility.nodes[i].DrawConnectionPoints();
-            }
 
             DrawConnections();
             ProcessContextMenu(Event.current);
@@ -101,21 +94,20 @@ namespace SimpleGraph
             GUI.matrix = oldMatrix;
         }
 
-        private void HandleZoomAndPan()
+         private void HandleZoomAndPan()
     {
-        // Handle zooming (scroll wheel)
+        // Handle zooming (mouse wheel)
         if (Event.current.type == EventType.ScrollWheel)
         {
-            float zoomDelta = -Event.current.delta.y / 150.0f;
             float oldZoom = zoomFactor;
+            zoomFactor -= Event.current.delta.y * 0.01f;
+            zoomFactor = Mathf.Clamp(zoomFactor, 0.1f, 2.0f);
 
-            // Adjust zoom factor within range
-            zoomFactor = Mathf.Clamp(zoomFactor + zoomDelta, 0.1f, 10.0f);
-
-            // Maintain the panOffset so zoom centers around the mouse position
             Vector2 mousePos = Event.current.mousePosition;
             Vector2 zoomPos = (mousePos - panOffset) / oldZoom;
             panOffset -= zoomPos * (zoomFactor - oldZoom);
+
+            //DrawGrid(100 * zoomFactor, 0.5f, Color.white);
 
             Event.current.Use();
         }
@@ -123,16 +115,22 @@ namespace SimpleGraph
         // Handle panning (middle mouse button drag)
         if (Event.current.type == EventType.MouseDrag && Event.current.button == 2)
         {
-            panOffset += Event.current.delta;
+            panOffset += Event.current.delta / 10; // Adjust panning speed
             Event.current.Use();
         }
-    }
 
+    }
+    
     private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
     {
         // Calculate number of divisions based on window size and grid spacing
-        int widthDivs = Mathf.CeilToInt((position.width + 2 * gridSpacing) / gridSpacing);
-        int heightDivs = Mathf.CeilToInt((position.height + 2 * gridSpacing) / gridSpacing);
+        /*
+        int widthDivs = Mathf.CeilToInt((position.width * zoomFactor + 2 * gridSpacing) / gridSpacing);
+        int heightDivs = Mathf.CeilToInt((position.height * zoomFactor + 2 * gridSpacing) / gridSpacing);
+        */
+
+        int widthDivs = Mathf.CeilToInt((position.width * gridSpacing) / gridSpacing);
+        int heightDivs = Mathf.CeilToInt((position.height * gridSpacing) / gridSpacing);
 
         // Begin GUI drawing
         Handles.BeginGUI();
@@ -149,7 +147,7 @@ namespace SimpleGraph
             // The gridSpacing * i + newOffset creates the moving grid based on panOffset
             Handles.DrawLine(
                 new Vector3(gridSpacing * i, -gridSpacing, 0) + newOffset, 
-                new Vector3(gridSpacing * i, position.height + gridSpacing, 0f) + newOffset
+                new Vector3(gridSpacing * i, position.height * zoomFactor + gridSpacing, 0f) + newOffset
             );
         }
 
@@ -158,7 +156,7 @@ namespace SimpleGraph
         {
             Handles.DrawLine(
                 new Vector3(-gridSpacing, gridSpacing * j, 0) + newOffset, 
-                new Vector3(position.width + gridSpacing, gridSpacing * j, 0f) + newOffset
+                new Vector3(position.width * zoomFactor + gridSpacing, gridSpacing * j, 0f) + newOffset
             );
         }
 
@@ -168,6 +166,7 @@ namespace SimpleGraph
         // End GUI drawing
         Handles.EndGUI();
     }
+    
 
         
     private void LoadGraph()
@@ -188,10 +187,11 @@ namespace SimpleGraph
         // Iterate through the children of SimpleGraphNodes parent
         foreach (Transform child in simpleGraphNodesParent.transform)
         {
-            GraphNode graphNode = child.GetComponent<GraphNode>();
+            GraphNode graphNode = child.GetComponent<GraphNode>();            
+
             if (graphNode != null)
             {
-                graphNode.windowRect = new Rect(child.position.x, child.position.y, 200, 150);
+                graphNode.windowRect = new Rect(graphNode.windowRect.x, graphNode.windowRect.y, 200, 150);
                 GraphUtility.nodes.Add(graphNode);
             }
         }
