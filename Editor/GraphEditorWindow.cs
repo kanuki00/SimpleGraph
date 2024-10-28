@@ -115,7 +115,7 @@ namespace SimpleGraph
         // Handle panning (middle mouse button drag)
         if (Event.current.type == EventType.MouseDrag && Event.current.button == 2)
         {
-            panOffset += Event.current.delta / 10; // Adjust panning speed
+            panOffset += Event.current.delta; // Adjust panning speed
             Event.current.Use();
         }
 
