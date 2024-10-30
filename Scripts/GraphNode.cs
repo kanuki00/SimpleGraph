@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;
 using SimpleGraph; 
+using UnityEditor;
 
 namespace SimpleGraph
 {
@@ -81,23 +82,40 @@ namespace SimpleGraph
             GUILayout.BeginVertical();
             GUILayout.Space(10); 
 
-            GUILayout.Label("Node Name:");
-            string newNodeName = GUILayout.TextField(nodeName, GUILayout.Width(150));
-            if (newNodeName != nodeName)
-            {
-                nodeName = newNodeName;
-                UpdateNodeNameInHierarchy();
+            if (nodeName == "StartNode" || nodeName == "EndNode" || nodeName == "InverterNode") {
+
+                GUILayout.Label("Node Type: " + nodeName);
+                GUILayout.Space(10); 
+                if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
+                {
+                    #if UNITY_EDITOR
+                    UnityEditor.Selection.activeGameObject = this.gameObject;
+                    #endif
+                }
+
+
+            } else {
+
+                GUILayout.Label("Node Name:");
+                string newNodeName = GUILayout.TextField(nodeName, GUILayout.Width(150));
+                if (newNodeName != nodeName)
+                {
+                    nodeName = newNodeName;
+                    UpdateNodeNameInHierarchy();
+                }
+
+                GUILayout.Space(10);
+
+                // Add the "Edit in Hierarchy" button
+                if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
+                {
+                    #if UNITY_EDITOR
+                    UnityEditor.Selection.activeGameObject = this.gameObject;
+                    #endif
+                }
             }
 
             GUILayout.Space(10);
-
-            // Add the "Edit in Hierarchy" button
-            if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
-            {
-                #if UNITY_EDITOR
-                UnityEditor.Selection.activeGameObject = this.gameObject;
-                #endif
-            }
 
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
@@ -106,6 +124,7 @@ namespace SimpleGraph
 
             DrawConnectionPoints();
             GUI.DragWindow();
+            
         }
 
         private void UpdateNodeNameInHierarchy()
@@ -113,4 +132,51 @@ namespace SimpleGraph
             this.gameObject.name = nodeName;
         }
     }
+
+    #if UNITY_EDITOR
+
+    [CustomEditor(typeof(GraphNode))]
+    public class GraphNodeEditor : Editor
+    {
+        private string customTextField = "Add the node functionality below using UnityEvents.";
+        private bool showDefaultInspector = false;
+
+        private bool startOnBegin = false;
+
+        public override void OnInspectorGUI()
+        {
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField(customTextField, EditorStyles.wordWrappedLabel);
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUILayout.Space();
+
+            GraphNode graphNode = (GraphNode)target;
+
+            if (graphNode.nodeName == "StartNode") {
+                startOnBegin = EditorGUILayout.Toggle("Start On Begin", startOnBegin);
+                EditorGUILayout.Space(10);
+            }
+
+            EditorGUILayout.LabelField("Node Events", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("When node is Activated");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("onActiveEvent"), new GUIContent("onActiveEvent"));
+
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("When node is Completed");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("onCompletionEvent"), new GUIContent("onCompletionEvent"));
+
+            serializedObject.ApplyModifiedProperties();
+            
+            showDefaultInspector = EditorGUILayout.Foldout(showDefaultInspector, "Default Inspector");
+            if (showDefaultInspector)
+            {
+                DrawDefaultInspector();
+            }
+        }
+    }
+    #endif
 }
