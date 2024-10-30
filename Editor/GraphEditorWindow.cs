@@ -16,11 +16,13 @@ namespace SimpleGraph
         private Vector2 panOffset = Vector2.zero; 
         private static GameObject tempNodesParent;
 
+        
+
         public static void ShowEditor(GameObject nodesParent)
         {
             tempNodesParent = nodesParent;
             GraphEditorWindow editor = EditorWindow.GetWindow<GraphEditorWindow>();
-            editor.titleContent = new GUIContent("Graph Editor");
+            editor.titleContent = new GUIContent(nodesParent.name);
         }
 
         private void OnEnable()
@@ -67,9 +69,17 @@ namespace SimpleGraph
         {
             HandleZoomAndPan();
 
+
             Matrix4x4 oldMatrix = GUI.matrix;
+
+            
             GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one * zoomFactor);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
+            
+            float contentWidth = position.width / zoomFactor;
+            float contentHeight = position.height / zoomFactor;
+
+            
             BeginWindows();
             for (int i = 0; i < GraphUtility.nodes.Count; i++)
             {
@@ -119,6 +129,10 @@ namespace SimpleGraph
         private void LoadGraph(GameObject nodesParent)
         {
             GraphUtility.nodes.Clear();
+            if (nodesParent == null)
+            {
+                return;
+            }
 
             foreach (Transform child in nodesParent.transform)
             {

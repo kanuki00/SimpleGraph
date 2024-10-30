@@ -138,7 +138,7 @@ namespace SimpleGraph
     [CustomEditor(typeof(GraphNode))]
     public class GraphNodeEditor : Editor
     {
-        private string customTextField = "Add the node functionality below using UnityEvents.";
+        private string customTextField = "Add the task node functionality below using UnityEvents.";
         private bool showDefaultInspector = false;
 
         private bool startOnBegin = false;
