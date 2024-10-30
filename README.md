@@ -1,7 +1,10 @@
 # Node Graph Editor
 
 This project is a Node Graph Editor for Unity, allowing users to create and manage nodes within a graph structure. The editor provides a visual interface for creating, connecting, and editing nodes.
-![alt text]()
+
+Here's an example of a possible Node logic:
+
+![alt text](images/graph-logic.png)
 
 ## Features
 
