@@ -55,14 +55,12 @@ namespace SimpleGraph
             // "In" button
             if (GUI.Button(new Rect(inButtonX, inButtonY, buttonWidth, buttonHeight), "•"))
             {
-                //Debug.Log("In button clicked on node: " + nodeName);
                 OnSetStartNode?.Invoke(this);
             }
             
             // "Out" button
             if (GUI.Button(new Rect(outButtonX, outButtonY, buttonWidth, buttonHeight), "•"))
             {
-                Debug.Log("Out button clicked on node: " + nodeName);
                 OnSetEndNode?.Invoke(this);
                 
             }
@@ -73,7 +71,7 @@ namespace SimpleGraph
             // The "x" button in the top-right corner
             if (GUI.Button(new Rect(windowRect.width - 20, 0, 20, 20), "x"))
             {
-                Debug.Log("Delete button clicked on node: " + nodeName);
+                OnSetEndNode?.Invoke(this); // Remove connections
                 GraphUtility.RemoveNode(this);
             }
 
@@ -91,11 +89,18 @@ namespace SimpleGraph
                 UpdateNodeNameInHierarchy();
             }
 
-            GUILayout.Label("Completed: " + isCompleted);
-            GUILayout.Label("Active: " + isActive);
+            GUILayout.Space(10);
+
+            // Add the "Edit in Hierarchy" button
+            if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
+            {
+                #if UNITY_EDITOR
+                UnityEditor.Selection.activeGameObject = this.gameObject;
+                #endif
+            }
+
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
-
 
             GUILayout.EndVertical();
 

@@ -14,24 +14,21 @@ namespace SimpleGraph
         private GraphNode startNode = null;
         private float zoomFactor = 1.0f; 
         private Vector2 panOffset = Vector2.zero; 
+        private static GameObject tempNodesParent;
 
-        [MenuItem("Window/Graph Editor")]
-        static void ShowEditor()
+        public static void ShowEditor(GameObject nodesParent)
         {
+            tempNodesParent = nodesParent;
             GraphEditorWindow editor = EditorWindow.GetWindow<GraphEditorWindow>();
             editor.titleContent = new GUIContent("Graph Editor");
         }
 
         private void OnEnable()
-        {
-            nodesParent = GameObject.Find("SimpleGraphNodes");
-            if (nodesParent == null)
-            {
-                nodesParent = new GameObject("SimpleGraphNodes");
-            }
-            LoadGraph();
-            
+        {   
+            nodesParent = tempNodesParent;
+            tempNodesParent = null;
 
+            LoadGraph(nodesParent);
             GraphNode.OnSetStartNode += SetStartNode;
             GraphNode.OnSetEndNode += SetEndNode;
         }
@@ -63,7 +60,6 @@ namespace SimpleGraph
                     node.previousNodes.Remove(startNode);
                 }
                 Repaint();
-                isConnecting = true;
             }
         }
 
@@ -120,18 +116,11 @@ namespace SimpleGraph
 
         }
         
-        private void LoadGraph()
+        private void LoadGraph(GameObject nodesParent)
         {
-            GameObject simpleGraphNodesParent = GameObject.Find("SimpleGraphNodes");
-            if (simpleGraphNodesParent == null)
-            {
-                Debug.LogError("SimpleGraphNodes parent GameObject not found.");
-                return;
-            }
-
             GraphUtility.nodes.Clear();
 
-            foreach (Transform child in simpleGraphNodesParent.transform)
+            foreach (Transform child in nodesParent.transform)
             {
                 GraphNode graphNode = child.GetComponent<GraphNode>();            
 
@@ -141,6 +130,7 @@ namespace SimpleGraph
                     GraphUtility.nodes.Add(graphNode);
                 }
             }
+            
             Repaint();
         }
 
