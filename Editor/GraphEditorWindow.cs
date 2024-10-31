@@ -1,27 +1,23 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
-using System.Collections;
 using System.IO;
 
 namespace SimpleGraph
 {
     public class GraphEditorWindow : EditorWindow
     {
-        //private EditorZoomer editorZoomer;
+        private Vector2 scrollPos;
         private GameObject nodesParent;
         
         private bool isConnecting = false;
         private GraphNode startNode = null;
-
+        private float zoomFactor = 1.0f; 
+        private Rect _zoomArea;
+        private const float zoomAreaScale = 10.0f;
+        private Vector2 panOffset = Vector2.zero; 
         private static GameObject tempNodesParent;
 
-        
-        // Zoom and pan variables
-        
-        private float zoomFactor = 1.0f; 
-        private Vector2 panOffset = Vector2.zero; 
-        private Vector2 scrollPos;
         
 
         public static void ShowEditor(GameObject nodesParent)
@@ -73,75 +69,61 @@ namespace SimpleGraph
 
         private void OnGUI()
         {
-            HandleZoomAndPan();
-            //editorZoomer.Begin();
-            // Draw a red border around the entire window
-            Color originalColor = GUI.color;
-            GUI.color = Color.yellow;
-            GUI.Box(new Rect(0, 0, position.width, position.height), GUIContent.none);
-            GUI.color = originalColor;
+        // Handle zooming and panning
+        HandleZoomAndPan();
 
-            Matrix4x4 oldMatrix = GUI.matrix;
+        // Save the current GUI matrix
+        Matrix4x4 oldMatrix = GUI.matrix;
+        GUIUtility.ScaleAroundPivot(Vector2.one * zoomFactor, new Vector2(position.width / 2f, position.height / 2f));
+        GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one) * GUI.matrix;
 
-                        
-            GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one * zoomFactor);
-            scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
-            
-            float contentWidth = position.width / zoomFactor;
-            float contentHeight = position.height / zoomFactor;
-            
-            //GUI.BeginGroup();
-            
-
-            
-            BeginWindows();
-            for (int i = 0; i < GraphUtility.nodes.Count; i++)
-            {
-                GraphUtility.nodes[i].windowRect = GUI.Window(i, GraphUtility.nodes[i].windowRect, GraphUtility.nodes[i].DrawNodeWindow, GraphUtility.nodes[i].nodeName);
-            }
-            EndWindows();
-            EditorGUILayout.EndScrollView();
-
-            DrawConnections();
-            ProcessContextMenu(Event.current);
-            if (isConnecting && startNode != null)
-            {
-                Vector3 startPos = new Vector3(startNode.windowRect.x + startNode.windowRect.width, startNode.windowRect.y + startNode.windowRect.height / 2, 0);
-                Vector3 endPos = Event.current.mousePosition;
-                Vector3 startTangent = startPos + Vector3.right * 50;
-                Vector3 endTangent = endPos + Vector3.left * 50;
-
-                Handles.DrawBezier(startPos, endPos, startTangent, endTangent, Color.white, null, 3f);
-                Repaint();
-            }
-            GUI.matrix = oldMatrix;
-            //editorZoomer.End();
+        BeginWindows();
+        for (int i = 0; i < GraphUtility.nodes.Count; i++)
+        {
+            GraphUtility.nodes[i].windowRect = GUI.Window(
+                i,
+                GraphUtility.nodes[i].windowRect,
+                GraphUtility.nodes[i].DrawNodeWindow,
+                GraphUtility.nodes[i].nodeName
+            );
         }
-        
+        EndWindows();
+
+        DrawConnections();
+
+        // Restore the original GUI matrix
+        GUI.matrix = oldMatrix;
+
+        // Process events
+        ProcessContextMenu(Event.current);
+        }
+
         private void HandleZoomAndPan()
         {
-            if (Event.current.type == EventType.ScrollWheel)
-            {
-                float oldZoom = zoomFactor;
-                zoomFactor -= Event.current.delta.y * 0.01f;
-                zoomFactor = Mathf.Clamp(zoomFactor, 0.1f, 2.0f);
+            Event e = Event.current;
 
-                Vector2 mousePos = Event.current.mousePosition;
-                Vector2 zoomPos = (mousePos - panOffset) / oldZoom;
-                panOffset -= zoomPos * (zoomFactor - oldZoom);
-                Event.current.Use();
+            // Handle zooming with the scroll wheel
+            if (e.type == EventType.ScrollWheel)
+            {
+                Vector2 mousePosition = e.mousePosition;
+                float zoomDelta = -e.delta.y * 0.01f;
+                float prevZoom = zoomFactor;
+                zoomFactor = Mathf.Clamp(zoomFactor + zoomDelta, 0.5f, 2f);
+
+                // Adjust panOffset to zoom around the mouse position
+                Vector2 offset = mousePosition - new Vector2(position.width / 2f, position.height / 2f);
+                panOffset -= offset * (zoomFactor - prevZoom) / zoomFactor;
+
+                e.Use();
             }
 
-            // Handle panning (middle mouse button drag)
-            if (Event.current.type == EventType.MouseDrag && Event.current.button == 2)
+            // Handle panning with middle mouse button drag
+            if (e.type == EventType.MouseDrag && e.button == 2)
             {
-                panOffset += Event.current.delta; // Adjust panning speed
-                Event.current.Use();
+                panOffset += e.delta;
+                e.Use();
             }
-
         }
-        
-        
         private void LoadGraph(GameObject nodesParent)
         {
             GraphUtility.nodes.Clear();
