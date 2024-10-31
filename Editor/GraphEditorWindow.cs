@@ -1,21 +1,27 @@
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 
 namespace SimpleGraph
 {
     public class GraphEditorWindow : EditorWindow
     {
-        private Vector2 scrollPos;
+        //private EditorZoomer editorZoomer;
         private GameObject nodesParent;
         
         private bool isConnecting = false;
         private GraphNode startNode = null;
-        private float zoomFactor = 1.0f; 
-        private Vector2 panOffset = Vector2.zero; 
+
         private static GameObject tempNodesParent;
 
+        
+        // Zoom and pan variables
+        
+        private float zoomFactor = 1.0f; 
+        private Vector2 panOffset = Vector2.zero; 
+        private Vector2 scrollPos;
         
 
         public static void ShowEditor(GameObject nodesParent)
@@ -68,16 +74,24 @@ namespace SimpleGraph
         private void OnGUI()
         {
             HandleZoomAndPan();
-
+            //editorZoomer.Begin();
+            // Draw a red border around the entire window
+            Color originalColor = GUI.color;
+            GUI.color = Color.yellow;
+            GUI.Box(new Rect(0, 0, position.width, position.height), GUIContent.none);
+            GUI.color = originalColor;
 
             Matrix4x4 oldMatrix = GUI.matrix;
 
-            
+                        
             GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one * zoomFactor);
             scrollPos = EditorGUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
             
             float contentWidth = position.width / zoomFactor;
             float contentHeight = position.height / zoomFactor;
+            
+            //GUI.BeginGroup();
+            
 
             
             BeginWindows();
@@ -101,8 +115,9 @@ namespace SimpleGraph
                 Repaint();
             }
             GUI.matrix = oldMatrix;
+            //editorZoomer.End();
         }
-
+        
         private void HandleZoomAndPan()
         {
             if (Event.current.type == EventType.ScrollWheel)
@@ -125,6 +140,7 @@ namespace SimpleGraph
             }
 
         }
+        
         
         private void LoadGraph(GameObject nodesParent)
         {
