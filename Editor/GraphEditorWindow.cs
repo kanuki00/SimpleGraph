@@ -69,37 +69,45 @@ namespace SimpleGraph
 
         private void OnGUI()
         {
-        // Handle zooming and panning
-        HandleZoomAndPan();
+            // Handle zooming and panning
+            HandleZoomAndPan();
 
-        // Save the current GUI matrix
-        Matrix4x4 oldMatrix = GUI.matrix;
-        GUIUtility.ScaleAroundPivot(Vector2.one * zoomFactor, new Vector2(position.width / 2f, position.height / 2f));
-        GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one) * GUI.matrix;
+            // THIS IS IMPORTANT; Somehow tricks the clipping window to extend beyond the initial view
+            GUI.EndGroup();
 
-        BeginWindows();
-        for (int i = 0; i < GraphUtility.nodes.Count; i++)
-        {
-            GraphUtility.nodes[i].windowRect = GUI.Window(
-                i,
-                GraphUtility.nodes[i].windowRect,
-                GraphUtility.nodes[i].DrawNodeWindow,
-                GraphUtility.nodes[i].nodeName
-            );
-        }
-        EndWindows();
+            Rect zoomedArea = new Rect(0, 0, position.width * zoomFactor, position.height * zoomFactor);
+            GUILayout.BeginArea(zoomedArea);
+            scrollPos = GUILayout.BeginScrollView(scrollPos, GUILayout.Width(position.width), GUILayout.Height(position.height));
+            GUILayout.EndScrollView();
+            GUILayout.EndArea();
 
-        DrawConnections();
+            // Save the current GUI matrix
+            Matrix4x4 oldMatrix = GUI.matrix;
+            GUIUtility.ScaleAroundPivot(Vector2.one * zoomFactor, new Vector2(position.width / 2f, position.height / 2f));
+            GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one) * GUI.matrix;
 
-        // Restore the original GUI matrix
-        GUI.matrix = oldMatrix;
+        
+            BeginWindows();
+            for (int i = 0; i < GraphUtility.nodes.Count; i++)
+            {
+                GraphUtility.nodes[i].windowRect = GUI.Window(
+                    i,
+                    GraphUtility.nodes[i].windowRect,
+                    GraphUtility.nodes[i].DrawNodeWindow,
+                    GraphUtility.nodes[i].nodeName
+                );
+            }
+            EndWindows();
 
-        // Process events
-        ProcessContextMenu(Event.current);
+            GUI.matrix = oldMatrix;
+
+            DrawConnections();
+            ProcessContextMenu(Event.current);
+            GUI.BeginGroup(zoomedArea);
         }
 
         private void HandleZoomAndPan()
-        {
+        {         
             Event e = Event.current;
 
             // Handle zooming with the scroll wheel
@@ -123,6 +131,7 @@ namespace SimpleGraph
                 panOffset += e.delta;
                 e.Use();
             }
+
         }
         private void LoadGraph(GameObject nodesParent)
         {
@@ -218,4 +227,36 @@ namespace SimpleGraph
             }
         }
     }
+
+    /*
+    public class EditorZoomArea
+    {
+        private const float kEditorWindowTabHeight = 21.0f;
+        private static Matrix4x4 _prevGuiMatrix;
+    
+        public static Rect Begin(float zoomScale, Rect screenCoordsArea)
+        {
+            GUI.EndGroup();        // End the group Unity begins automatically for an EditorWindow to clip out the window tab. This allows us to draw outside of the size of the EditorWindow.
+    
+            Rect clippedArea = screenCoordsArea.ScaleSizeBy(1.0f / zoomScale, screenCoordsArea.TopLeft());
+            clippedArea.y += kEditorWindowTabHeight;
+            GUI.BeginGroup(clippedArea);
+    
+            _prevGuiMatrix = GUI.matrix;
+            Matrix4x4 translation = Matrix4x4.TRS(clippedArea.TopLeft(), Quaternion.identity, Vector3.one);
+            Matrix4x4 scale = Matrix4x4.Scale(new Vector3(zoomScale, zoomScale, 1.0f));
+            GUI.matrix = translation * scale * translation.inverse * GUI.matrix;
+    
+            return clippedArea;
+        }
+    
+        public static void End()
+        {
+            GUI.matrix = _prevGuiMatrix;
+            GUI.EndGroup();
+            GUI.BeginGroup(new Rect(0.0f, kEditorWindowTabHeight, Screen.width, Screen.height));
+        }
+    }
+}
+*/
 }
