@@ -97,11 +97,22 @@ namespace SimpleGraph
                     GraphUtility.nodes[i].nodeName
                 );
             }
+
+            foreach (GraphNode node in GraphUtility.nodes)
+            {
+                foreach (GraphNode nextNode in node.nextNodes)
+                {
+                    Vector3 startPos = new Vector3(node.windowRect.x + node.windowRect.width, node.windowRect.y + (node.windowRect.height / 2), 0); // Start from the right center
+                    Vector3 endPos = new Vector3(nextNode.windowRect.x, nextNode.windowRect.y + nextNode.windowRect.height / 2, 0); // End at the left center
+                    Vector3 startTangent = startPos + Vector3.right * 50;
+                    Vector3 endTangent = endPos + Vector3.left * 50;
+
+                    Handles.DrawBezier(startPos, endPos, startTangent, endTangent, Color.white, null, 3f);
+                }
+            }
+
             EndWindows();
-
             GUI.matrix = oldMatrix;
-
-            DrawConnections();
             ProcessContextMenu(Event.current);
             GUI.BeginGroup(zoomedArea);
         }
@@ -172,28 +183,6 @@ namespace SimpleGraph
 
             return newNode;
         }
-
-        private void DrawConnections()
-        {
-            foreach (GraphNode node in GraphUtility.nodes)
-            {
-                foreach (GraphNode nextNode in node.nextNodes)
-                {
-                    DrawNodeCurve(node.windowRect, nextNode.windowRect);
-                }
-            }
-        }
-
-        private void DrawNodeCurve(Rect start, Rect end)
-        {
-            Vector3 startPos = new Vector3(start.x + start.width, start.y + (start.height / 2), 0); // Start from the right center
-            Vector3 endPos = new Vector3(end.x, end.y + end.height / 2, 0); // End at the left center
-            Vector3 startTangent = startPos + Vector3.right * 50;
-            Vector3 endTangent = endPos + Vector3.left * 50;
-
-            Handles.DrawBezier(startPos, endPos, startTangent, endTangent, Color.white, null, 3f);
-        }
-
         private void ProcessContextMenu(Event e)
         {
             if (e.button == 1 && e.type == EventType.MouseDown)
