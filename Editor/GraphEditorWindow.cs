@@ -1,7 +1,13 @@
+/*
+// THIS FILE IS NOT USING FOR BUILD, IT IS ONLY FOR EDITOR.
+// The file is used to create the Graph Editor Window in Unity Editor, e.g. the visual representation of the graph.
+*/
+
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 using System.IO;
+
 
 namespace SimpleGraph
 {
@@ -17,8 +23,6 @@ namespace SimpleGraph
         private const float zoomAreaScale = 10.0f;
         private Vector2 panOffset = Vector2.zero; 
         private static GameObject tempNodesParent;
-
-        
 
         public static void ShowEditor(GameObject nodesParent)
         {
@@ -69,10 +73,9 @@ namespace SimpleGraph
 
         private void OnGUI()
         {
-            // Handle zooming and panning
             HandleZoomAndPan();
 
-            // THIS IS IMPORTANT; Somehow tricks the clipping window to extend beyond the initial view
+            // Somehow tricks the clipping window to extend beyond the initial view
             GUI.EndGroup();
 
             Rect zoomedArea = new Rect(0, 0, position.width * zoomFactor, position.height * zoomFactor);
@@ -81,13 +84,20 @@ namespace SimpleGraph
             GUILayout.EndScrollView();
             GUILayout.EndArea();
 
+            // Draw the grid
+            DrawGrid(20, 0.2f, Color.gray);
+            DrawGrid(100, 0.4f, Color.gray);
+
             // Save the current GUI matrix
             Matrix4x4 oldMatrix = GUI.matrix;
             GUIUtility.ScaleAroundPivot(Vector2.one * zoomFactor, new Vector2(position.width / 2f, position.height / 2f));
             GUI.matrix = Matrix4x4.TRS(panOffset, Quaternion.identity, Vector3.one) * GUI.matrix;
 
-        
             BeginWindows();
+
+
+
+            // Draws the nodes
             for (int i = 0; i < GraphUtility.nodes.Count; i++)
             {
                 GraphUtility.nodes[i].windowRect = GUI.Window(
@@ -115,6 +125,31 @@ namespace SimpleGraph
             GUI.matrix = oldMatrix;
             ProcessContextMenu(Event.current);
             GUI.BeginGroup(zoomedArea);
+        }
+
+        private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
+        {
+
+            float scaledGridSpacing = gridSpacing * zoomFactor;
+
+            int widthDivs = Mathf.CeilToInt(position.width / scaledGridSpacing);
+            int heightDivs = Mathf.CeilToInt(position.height / scaledGridSpacing);
+
+            Handles.BeginGUI();
+            Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
+
+            for (int i = 0; i < widthDivs; i++)
+            {
+                Handles.DrawLine(new Vector3(scaledGridSpacing * i, 0, 0), new Vector3(scaledGridSpacing * i, position.height, 0));
+            }
+
+            for (int j = 0; j < heightDivs; j++)
+            {
+                Handles.DrawLine(new Vector3(0, scaledGridSpacing * j, 0), new Vector3(position.width, scaledGridSpacing * j, 0));
+            }
+
+            Handles.color = Color.white;
+            Handles.EndGUI();
         }
 
         private void HandleZoomAndPan()
@@ -183,6 +218,10 @@ namespace SimpleGraph
 
             return newNode;
         }
+
+        /*
+        // This function creates the "context menu", which is the menu that appears when you right-click on the graph editor window.
+        */
         private void ProcessContextMenu(Event e)
         {
             if (e.button == 1 && e.type == EventType.MouseDown)
@@ -216,36 +255,4 @@ namespace SimpleGraph
             }
         }
     }
-
-    /*
-    public class EditorZoomArea
-    {
-        private const float kEditorWindowTabHeight = 21.0f;
-        private static Matrix4x4 _prevGuiMatrix;
-    
-        public static Rect Begin(float zoomScale, Rect screenCoordsArea)
-        {
-            GUI.EndGroup();        // End the group Unity begins automatically for an EditorWindow to clip out the window tab. This allows us to draw outside of the size of the EditorWindow.
-    
-            Rect clippedArea = screenCoordsArea.ScaleSizeBy(1.0f / zoomScale, screenCoordsArea.TopLeft());
-            clippedArea.y += kEditorWindowTabHeight;
-            GUI.BeginGroup(clippedArea);
-    
-            _prevGuiMatrix = GUI.matrix;
-            Matrix4x4 translation = Matrix4x4.TRS(clippedArea.TopLeft(), Quaternion.identity, Vector3.one);
-            Matrix4x4 scale = Matrix4x4.Scale(new Vector3(zoomScale, zoomScale, 1.0f));
-            GUI.matrix = translation * scale * translation.inverse * GUI.matrix;
-    
-            return clippedArea;
-        }
-    
-        public static void End()
-        {
-            GUI.matrix = _prevGuiMatrix;
-            GUI.EndGroup();
-            GUI.BeginGroup(new Rect(0.0f, kEditorWindowTabHeight, Screen.width, Screen.height));
-        }
-    }
-}
-*/
 }
