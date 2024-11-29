@@ -129,8 +129,10 @@ namespace SimpleGraph
 
         private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
         {
-
             float scaledGridSpacing = gridSpacing * zoomFactor;
+
+            // Calculate the offset based on the pan offset and zoom factor
+            Vector2 offset = new Vector2(panOffset.x % scaledGridSpacing, panOffset.y % scaledGridSpacing);
 
             int widthDivs = Mathf.CeilToInt(position.width / scaledGridSpacing);
             int heightDivs = Mathf.CeilToInt(position.height / scaledGridSpacing);
@@ -138,14 +140,16 @@ namespace SimpleGraph
             Handles.BeginGUI();
             Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
 
-            for (int i = 0; i < widthDivs; i++)
+            for (int i = 0; i <= widthDivs; i++)
             {
-                Handles.DrawLine(new Vector3(scaledGridSpacing * i, 0, 0), new Vector3(scaledGridSpacing * i, position.height, 0));
+                float x = i * scaledGridSpacing - offset.x;
+                Handles.DrawLine(new Vector3(x, 0, 0), new Vector3(x, position.height, 0));
             }
 
-            for (int j = 0; j < heightDivs; j++)
+            for (int j = 0; j <= heightDivs; j++)
             {
-                Handles.DrawLine(new Vector3(0, scaledGridSpacing * j, 0), new Vector3(position.width, scaledGridSpacing * j, 0));
+                float y = j * scaledGridSpacing - offset.y;
+                Handles.DrawLine(new Vector3(0, y, 0), new Vector3(position.width, y, 0));
             }
 
             Handles.color = Color.white;
@@ -153,14 +157,14 @@ namespace SimpleGraph
         }
 
         private void HandleZoomAndPan()
-        {         
+        {
             Event e = Event.current;
 
             // Handle zooming with the scroll wheel
             if (e.type == EventType.ScrollWheel)
             {
                 Vector2 mousePosition = e.mousePosition;
-                float zoomDelta = -e.delta.y * 0.01f;
+                float zoomDelta = -e.delta.y * 0.005f; // Adjust the zoom delta for smoother zooming
                 float prevZoom = zoomFactor;
                 zoomFactor = Mathf.Clamp(zoomFactor + zoomDelta, 0.5f, 2f);
 
@@ -177,7 +181,6 @@ namespace SimpleGraph
                 panOffset += e.delta;
                 e.Use();
             }
-
         }
         private void LoadGraph(GameObject nodesParent)
         {

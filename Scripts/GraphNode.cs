@@ -14,9 +14,9 @@ namespace SimpleGraph
         public List<GraphNode> nextNodes = new List<GraphNode>(); // Add list for next nodes
 
         [HideInInspector]
-        public bool isCompleted = false; // Add isCompleted state
+        public bool isCompleted = true; // Add isCompleted state
         [HideInInspector]
-        public bool isActive = false; // Add isActive state
+        public bool isActive = true; // Add isActive state
 
         public delegate void NodeEventHandler(GraphNode node);
         public static event NodeEventHandler OnSetStartNode;
@@ -120,11 +120,20 @@ namespace SimpleGraph
             GUILayout.EndVertical();
             GUILayout.EndHorizontal();
 
-            GUILayout.EndVertical();
+            Color colorOriginal = GUI.color;
 
+            GUI.color = isActive ? Color.green : Color.red;
+            GUILayout.Label("Active: " + isActive);
+
+            GUI.color = isCompleted ? Color.green : Color.red;
+            GUILayout.Label("Completed: " + isCompleted);
+
+            GUI.color = colorOriginal;
+            GUILayout.Space(10);
+
+            GUILayout.EndVertical();            
             DrawConnectionPoints();
             GUI.DragWindow();
-            
         }
 
         private void UpdateNodeNameInHierarchy()
