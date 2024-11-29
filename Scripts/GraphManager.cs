@@ -42,7 +42,7 @@ namespace SimpleGraph {
             Debug.LogWarning("[GraphManager] Missing 'StartNode'.");
         }
 
-        public void SetNodeCompletion(string nodeName, bool isComplete)
+        public void SetNodeCompletion(string nodeName, bool desiredCompletion)
         {
             foreach (Transform child in transform)
             {
@@ -53,12 +53,16 @@ namespace SimpleGraph {
                     {
                         if (ArePreviousNodesCompleted(node))
                         {
-                            node.UpdateState("isComplete", isComplete);
-                            Debug.Log($"[GraphManager] Node '{nodeName}' is {(isComplete ? "completed" : "uncompleted")}!");
-                            ChangeNextNodeState(node, isComplete);
+                            node.UpdateState("isComplete", desiredCompletion);
+                            Debug.Log($"[GraphManager] Node '{nodeName}' is {(desiredCompletion ? "completed" : "uncompleted")}!");
+                            ChangeNextNodeState(node, desiredCompletion);
                         }
                         else
                         {
+                            if (nodeName == "InverterNode") {
+                                ChangeNextNodeState(node, desiredCompletion);
+                                break;
+                            }
                             Debug.LogWarning($"[GraphManager] Previous nodes are not completed for node '{nodeName}'.");
                         }
                     }
@@ -96,26 +100,25 @@ namespace SimpleGraph {
             return true;
         }
 
-        private void ChangeNextNodeState(GraphNode node, bool isComplete)
+        private void ChangeNextNodeState(GraphNode node, bool desiredCompletion)
         {
             //Debug.Log($"[GraphManager] Activating next nodes for node: {node.nodeName}");
             foreach (GraphNode nextNode in node.nextNodes)
             {
                 if (nextNode.nodeName == "InverterNode")
                 {
-                    if (isComplete) {
-                        SetNodeCompletion(nextNode.nodeName, false);
-                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isCompleted);
+                    if (desiredCompletion) {
+                        nextNode.UpdateState("isComplete", false);
+                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now FALSE " + nextNode.isCompleted);
                         break;
                     } else {
-                        nextNode.UpdateState("isActive", true);
-                        SetNodeCompletion(nextNode.nodeName, true);
-                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isCompleted);
+                        nextNode.UpdateState("isComplete", true);
+                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now TRUE" + nextNode.isCompleted);
                         break;
                     }
                 }
                 if (nextNode.nodeName == "EndNode") {
-                    if (isComplete) {
+                    if (desiredCompletion) {
                         if (nextNode.requireAllCompleted) {
                             bool allNodesCompleted = true;
                             foreach (Transform child in transform)
