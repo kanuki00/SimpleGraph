@@ -55,8 +55,16 @@ namespace SimpleGraph
         {
             if (isConnecting && startNode != null)
             {
-                startNode.nextNodes.Add(node); 
-                node.previousNodes.Add(startNode); 
+                if (!startNode.nextNodes.Contains(node))
+                {
+                    startNode.nextNodes.Add(node);
+                }
+                
+                if (!node.previousNodes.Contains(startNode))
+                {
+                    node.previousNodes.Add(startNode);
+                }
+                
                 isConnecting = false;
                 startNode = null;
             }

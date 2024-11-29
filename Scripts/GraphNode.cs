@@ -14,9 +14,9 @@ namespace SimpleGraph
         public List<GraphNode> nextNodes = new List<GraphNode>(); // Add list for next nodes
 
         [HideInInspector]
-        public bool isCompleted = true; // Add isCompleted state
+        public bool isCompleted = false; 
         [HideInInspector]
-        public bool isActive = true; // Add isActive state
+        public bool isActive = false; 
 
         public delegate void NodeEventHandler(GraphNode node);
         public static event NodeEventHandler OnSetStartNode;
@@ -38,10 +38,19 @@ namespace SimpleGraph
             onCompletionEvent?.Invoke(this);
         }
 
-        public void UpdateCompletionState(bool completed)
+        public void UpdateState(string activationType, bool state)
         {
-            isCompleted = completed;
-            TriggerCompletionEvent();
+            switch (activationType)
+            {
+                case "isActive":
+                    isActive = state;
+                    TriggerActiveEvent();
+                    break;
+                case "isComplete":
+                    isCompleted = state;
+                    TriggerCompletionEvent();
+                    break;
+            }
         }
 
         public virtual void DrawConnectionPoints()

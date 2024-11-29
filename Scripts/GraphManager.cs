@@ -10,60 +10,74 @@ namespace SimpleGraph {
         public string projectName;
 
         void Start() {
-            ActivateStartNode();
+            foreach (Transform child in transform)
+            {
+                GraphNode node = child.GetComponent<GraphNode>();
+                if (node != null && node.nodeName == "StartNode")
+                {
+                    node.UpdateState("isActive", true);
+                    Debug.Log($"[GraphManager] Start node {node.nodeName} is now active.");
+                    return;
+                }
+            }
+            Debug.LogWarning("[GraphManager] Missing 'StartNode'.");
         }
 
-        public void CompleteNode(string nodeName)
+        public void SetNodeCompletion(string nodeName, bool isComplete)
         {
-            Debug.Log($"[GraphManager] CompleteNode called with nodeName: {nodeName}");
             foreach (Transform child in transform)
             {
                 GraphNode node = child.GetComponent<GraphNode>();
                 if (node != null && node.nodeName == nodeName)
                 {
-                    Debug.Log($"[GraphManager] Found node: {nodeName}");
                     if (node.isActive)
                     {
-                        Debug.Log($"[GraphManager] Node {nodeName} is active.");
-                        // Check if all previous nodes are completed
-                        if (ArePreviousNodesCompleted(node))
+                        if (isComplete || ArePreviousNodesCompleted(node))
                         {
-                            node.UpdateCompletionState(true);
-                            Debug.Log($"[GraphManager] Node {nodeName} is now completed.");
-                            ActivateNextNodes(node);
+                            node.UpdateState("isComplete", isComplete);
+                            Debug.Log($"[GraphManager] Node '{nodeName}' is {(isComplete ? "completed" : "uncompleted")}!");
+                            ChangeNextNodeState(node, isComplete);
                         }
                         else
                         {
-                            Debug.LogWarning($"[GraphManager] Not all previous nodes are completed for node {nodeName}.");
+                            Debug.LogWarning($"[GraphManager] Previous nodes are not completed for node '{nodeName}'.");
                         }
                     }
                     else
                     {
-                        Debug.LogWarning($"[GraphManager] Node {nodeName} is not active.");
+                        Debug.LogWarning($"[GraphManager] Node '{nodeName}' is not active.");
                     }
                     return;
                 }
             }
+            Debug.LogWarning($"[GraphManager] SetNodeCompletion on node '{nodeName}' failed. Node not found.");
+        }
 
-            Debug.LogWarning($"[GraphManager] Node with name {nodeName} not found.");
+        // Wrapper method for UnityEvents
+        public void CompleteNode(string nodeName)
+        {
+            SetNodeCompletion(nodeName, true);
+        }
+
+        public void UnCompleteNode(string nodeName)
+        {
+            SetNodeCompletion(nodeName, false);
         }
 
         private bool ArePreviousNodesCompleted(GraphNode node)
         {
-            Debug.Log($"[GraphManager] Checking if previous nodes are completed for node: {node.nodeName}");
             foreach (GraphNode previousNode in node.previousNodes)
             {
                 if (!previousNode.isCompleted)
                 {
-                    
                     return false;
                 }
             }
-            Debug.Log($"[GraphManager] All previous nodes are completed for node: {node.nodeName}");
+
             return true;
         }
 
-        private void ActivateNextNodes(GraphNode node)
+        private void ChangeNextNodeState(GraphNode node, bool isComplete)
         {
             Debug.Log($"[GraphManager] Activating next nodes for node: {node.nodeName}");
             foreach (GraphNode nextNode in node.nextNodes)
@@ -75,26 +89,10 @@ namespace SimpleGraph {
                 }
                 else
                 {
-                    nextNode.isActive = true;
+                    nextNode.UpdateState("isActive", true);
                     Debug.Log("Node " + nextNode.nodeName + " is now active.");
                 }
             }
-        }
-
-        private void ActivateStartNode()
-        {
-            foreach (Transform child in transform)
-            {
-                GraphNode node = child.GetComponent<GraphNode>();
-                if (node != null && node.nodeName == "StartNode")
-                {
-                    node.isActive = true;
-                    Debug.Log($"[GraphManager] Start node {node.nodeName} is now active.");
-                    return;
-                }
-            }
-
-            Debug.LogWarning("[GraphManager] Start node with name 'StartNode' not found.");
         }
     }
 
