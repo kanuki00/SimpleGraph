@@ -221,7 +221,7 @@ namespace SimpleGraph
 
             // Add the GraphNode component
             GraphNode newNode = nodeObject.AddComponent<GraphNode>();
-            newNode.windowRect = new Rect(position.x, position.y, 200, 150);
+            newNode.windowRect = new Rect(position.x, position.y, 200, 170);
             newNode.nodeName = nodeName;
 
             // Add the new node to the GraphUtility nodes list
