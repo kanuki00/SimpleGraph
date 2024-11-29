@@ -17,6 +17,12 @@ namespace SimpleGraph
         public bool isCompleted = false; 
         [HideInInspector]
         public bool isActive = false; 
+        [HideInInspector]
+        public bool requireAllCompleted;
+        [HideInInspector]
+        public bool startOnBegin;
+        
+
 
         public delegate void NodeEventHandler(GraphNode node);
         public static event NodeEventHandler OnSetStartNode;
@@ -25,8 +31,11 @@ namespace SimpleGraph
         [System.Serializable]
         public class NodeEvent : UnityEvent<GraphNode> { }
 
+        [HideInInspector]
         public NodeEvent onActiveEvent;
+        [HideInInspector]
         public NodeEvent onCompletionEvent;
+        
 
         public void TriggerActiveEvent()
         {
@@ -158,8 +167,14 @@ namespace SimpleGraph
     {
         private string customTextField = "Add the task node functionality below using UnityEvents.";
         private bool showDefaultInspector = false;
+        private SerializedProperty startOnBeginProperty;
+        private SerializedProperty requireAllCompleted;
 
-        private bool startOnBegin = false;
+        private void OnEnable()
+        {
+            startOnBeginProperty = serializedObject.FindProperty("startOnBegin");
+            requireAllCompleted = serializedObject.FindProperty("requireAllCompleted");
+        }
 
         public override void OnInspectorGUI()
         {
@@ -174,7 +189,12 @@ namespace SimpleGraph
             GraphNode graphNode = (GraphNode)target;
 
             if (graphNode.nodeName == "StartNode") {
-                startOnBegin = EditorGUILayout.Toggle("Start On Begin", startOnBegin);
+                EditorGUILayout.PropertyField(startOnBeginProperty, new GUIContent("Start On Begin"));
+                EditorGUILayout.Space(10);
+            }
+
+            if (graphNode.nodeName == "EndNode") {
+                EditorGUILayout.PropertyField(requireAllCompleted, new GUIContent("Require all nodes to be completed"));
                 EditorGUILayout.Space(10);
             }
 
@@ -189,7 +209,7 @@ namespace SimpleGraph
 
             serializedObject.ApplyModifiedProperties();
             
-            showDefaultInspector = EditorGUILayout.Foldout(showDefaultInspector, "Default Inspector");
+            showDefaultInspector = EditorGUILayout.Foldout(showDefaultInspector, "Default Inspector / Advanced settings");
             if (showDefaultInspector)
             {
                 DrawDefaultInspector();

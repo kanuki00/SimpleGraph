@@ -10,14 +10,33 @@ namespace SimpleGraph {
         public string projectName;
 
         void Start() {
+            
             foreach (Transform child in transform)
             {
                 GraphNode node = child.GetComponent<GraphNode>();
+                
+                if (node.nodeName == "InverterNode") {
+                    node.UpdateState("isActive", true);
+                    node.UpdateState("isComplete", true);
+                }
+            }
+
+            foreach (Transform child in transform)
+            {
+                GraphNode node = child.GetComponent<GraphNode>();
+        
+
                 if (node != null && node.nodeName == "StartNode")
                 {
-                    node.UpdateState("isActive", true);
-                    Debug.Log($"[GraphManager] Start node {node.nodeName} is now active.");
-                    return;
+                    if (node.startOnBegin == true ) {
+                        node.UpdateState("isActive", true);
+                        CompleteNode(node.nodeName);
+                        Debug.Log($"[GraphManager] Start node {node.nodeName} is now active.");
+                        return;
+                    } else {
+                        Debug.Log("[GraphManager] 'StartNode' waiting for activation.");
+                        return;
+                    }
                 }
             }
             Debug.LogWarning("[GraphManager] Missing 'StartNode'.");
@@ -32,7 +51,7 @@ namespace SimpleGraph {
                 {
                     if (node.isActive)
                     {
-                        if (isComplete || ArePreviousNodesCompleted(node))
+                        if (ArePreviousNodesCompleted(node))
                         {
                             node.UpdateState("isComplete", isComplete);
                             Debug.Log($"[GraphManager] Node '{nodeName}' is {(isComplete ? "completed" : "uncompleted")}!");
@@ -79,13 +98,49 @@ namespace SimpleGraph {
 
         private void ChangeNextNodeState(GraphNode node, bool isComplete)
         {
-            Debug.Log($"[GraphManager] Activating next nodes for node: {node.nodeName}");
+            //Debug.Log($"[GraphManager] Activating next nodes for node: {node.nodeName}");
             foreach (GraphNode nextNode in node.nextNodes)
             {
                 if (nextNode.nodeName == "InverterNode")
                 {
-                    nextNode.isActive = !node.isActive;
-                    Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isActive);
+                    if (isComplete) {
+                        SetNodeCompletion(nextNode.nodeName, false);
+                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isCompleted);
+                        break;
+                    } else {
+                        nextNode.UpdateState("isActive", true);
+                        SetNodeCompletion(nextNode.nodeName, true);
+                        Debug.Log("Inverter node " + nextNode.nodeName + " state is now " + nextNode.isCompleted);
+                        break;
+                    }
+                }
+                if (nextNode.nodeName == "EndNode") {
+                    if (isComplete) {
+                        if (nextNode.requireAllCompleted) {
+                            bool allNodesCompleted = true;
+                            foreach (Transform child in transform)
+                            {
+                                GraphNode checkNode = child.GetComponent<GraphNode>();
+                                if (checkNode != null && checkNode.nodeName != "InverterNode" && checkNode.nodeName != "EndNode" && !checkNode.isCompleted)
+                                {
+                                    allNodesCompleted = false;
+                                    Debug.Log("Not all nodes are completed!");
+                                    break;
+                                }
+                            }
+
+                            if (allNodesCompleted)
+                            {
+                                nextNode.UpdateState("isActive", true);
+                                CompleteNode(nextNode.nodeName);
+
+                                Debug.Log("End node " + nextNode.nodeName + " is now active and completed.");
+                            }
+                        }
+                    } else {
+                        nextNode.UpdateState("isActive", false);
+                        Debug.Log("Node " + nextNode.nodeName + " is now not active.");
+                    }
                 }
                 else
                 {
