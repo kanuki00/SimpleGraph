@@ -8,6 +8,8 @@ namespace SimpleGraph {
     public class GraphManager : MonoBehaviour
     {
         public string projectName;
+        public AuthenticationType authType; 
+        public CloudserviceLoggerType loggerType;
 
         void Start() {
             
@@ -153,6 +155,18 @@ namespace SimpleGraph {
             }
         }
     }
+     public enum AuthenticationType
+    {
+        OAuth,
+        APIKey,
+        BasicAuth
+    }
+
+    public enum CloudserviceLoggerType
+    {
+        Automatic,
+        Manual,
+    }
 
     #if UNITY_EDITOR 
     [CustomEditor(typeof(GraphManager))]
@@ -161,8 +175,14 @@ namespace SimpleGraph {
     public class GraphManagerEditor : Editor
     {
         private string customTextField = "Welcome to the Node Manager! You can find documentation to this project from the project's Github page, and I highly recommend skimming through the source code, as most of it is commented.";
+        private bool showOracleIntegration = false;
+        private bool sendDataToCloud = false;
+
+
+
         public override void OnInspectorGUI()
         {
+            GraphManager graphManager = (GraphManager)target;
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space();
@@ -195,6 +215,38 @@ namespace SimpleGraph {
         
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUILayout.Space();
+
+            // Oracle Integration settings. Modify this section to implement other cloud services.
+            showOracleIntegration = EditorGUILayout.Foldout(showOracleIntegration, "Cloud Integration");
+            if (showOracleIntegration)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Currently this project only supports the Oracle Cloud integration.", EditorStyles.wordWrappedLabel);
+                EditorGUILayout.Space();
+                sendDataToCloud = EditorGUILayout.Toggle("Send data:", sendDataToCloud);
+                graphManager.loggerType = (CloudserviceLoggerType)EditorGUILayout.EnumPopup("Logger type:", graphManager.loggerType);
+                EditorGUILayout.Space();
+
+                EditorGUILayout.BeginVertical("box");
+                graphManager.authType = (AuthenticationType)EditorGUILayout.EnumPopup("Authentication:", graphManager.authType);
+                EditorGUILayout.Space();
+                if (graphManager.authType == AuthenticationType.BasicAuth)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.LabelField("Auth link:");
+                    graphManager.projectName = EditorGUILayout.TextField(graphManager.projectName);
+                    EditorGUI.indentLevel--;
+                }
+    
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space();
+            }
+
+            // Apply changes to the serializedObject
+            serializedObject.ApplyModifiedProperties();
+
         }
     }
     #endif
