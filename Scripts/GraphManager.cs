@@ -10,8 +10,17 @@ namespace SimpleGraph {
         public string projectName;
         public AuthenticationType authType; 
         public CloudserviceLoggerType loggerType;
-
+        public bool sendDataToCloud; 
+        
         void Start() {
+
+            if (sendDataToCloud)
+            {
+                string json = JsonUtility.ToJson(this, true);
+                string path = Application.dataPath + "/GraphData.json";
+                System.IO.File.WriteAllText(path, json);
+                Debug.Log($"[GraphManager] Data sent to cloud and saved to {path}");
+            }
             
             foreach (Transform child in transform)
             {
@@ -82,11 +91,24 @@ namespace SimpleGraph {
         public void CompleteNode(string nodeName)
         {
             SetNodeCompletion(nodeName, true);
+            if (sendDataToCloud) {
+                sendDataToCloudMethod(nodeName, "completed");
+            }
         }
 
         public void UnCompleteNode(string nodeName)
         {
             SetNodeCompletion(nodeName, false);
+            if (sendDataToCloud) {
+                sendDataToCloudMethod(nodeName, "uncompleted");
+            }
+        }
+
+        public void sendDataToCloudMethod(string nodeName, string nodeState) {
+            string json = JsonUtility.ToJson(this, true);
+            string path = Application.dataPath + "/GraphData.json";
+            System.IO.File.WriteAllText(path, json);
+            Debug.Log($"[GraphManager] Data sent to cloud and saved to {path}");
         }
 
         private bool ArePreviousNodesCompleted(GraphNode node)
@@ -176,9 +198,6 @@ namespace SimpleGraph {
     {
         private string customTextField = "Welcome to the Node Manager! You can find documentation to this project from the project's Github page, and I highly recommend skimming through the source code, as most of it is commented.";
         private bool showOracleIntegration = false;
-        private bool sendDataToCloud = false;
-
-
 
         public override void OnInspectorGUI()
         {
@@ -225,7 +244,7 @@ namespace SimpleGraph {
                 EditorGUILayout.Space();
                 EditorGUILayout.LabelField("Currently this project only supports the Oracle Cloud integration.", EditorStyles.wordWrappedLabel);
                 EditorGUILayout.Space();
-                sendDataToCloud = EditorGUILayout.Toggle("Send data:", sendDataToCloud);
+                graphManager.sendDataToCloud = EditorGUILayout.Toggle("Send data:", graphManager.sendDataToCloud);
                 graphManager.loggerType = (CloudserviceLoggerType)EditorGUILayout.EnumPopup("Logger type:", graphManager.loggerType);
                 EditorGUILayout.Space();
 

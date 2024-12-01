@@ -142,6 +142,12 @@ namespace SimpleGraph
             // Calculate the offset based on the pan offset and zoom factor
             Vector2 offset = new Vector2(panOffset.x % scaledGridSpacing, panOffset.y % scaledGridSpacing);
 
+            // Calculate the center of the view
+            Vector2 center = new Vector2(position.width / 2f, position.height / 2f);
+
+            // Adjust the pan offset to keep the grid centered
+            Vector2 adjustedPanOffset = panOffset * zoomFactor - center * (zoomFactor - 1);
+
             int widthDivs = Mathf.CeilToInt(position.width / scaledGridSpacing);
             int heightDivs = Mathf.CeilToInt(position.height / scaledGridSpacing);
 
@@ -150,13 +156,13 @@ namespace SimpleGraph
 
             for (int i = 0; i <= widthDivs; i++)
             {
-                float x = i * scaledGridSpacing - offset.x;
+                float x = i * scaledGridSpacing - offset.x + adjustedPanOffset.x;
                 Handles.DrawLine(new Vector3(x, 0, 0), new Vector3(x, position.height, 0));
             }
 
             for (int j = 0; j <= heightDivs; j++)
             {
-                float y = j * scaledGridSpacing - offset.y;
+                float y = j * scaledGridSpacing - offset.y + adjustedPanOffset.y;
                 Handles.DrawLine(new Vector3(0, y, 0), new Vector3(position.width, y, 0));
             }
 
@@ -177,8 +183,8 @@ namespace SimpleGraph
                 zoomFactor = Mathf.Clamp(zoomFactor + zoomDelta, 0.5f, 2f);
 
                 // Adjust panOffset to zoom around the mouse position
-                Vector2 offset = mousePosition - new Vector2(position.width / 2f, position.height / 2f);
-                panOffset -= offset * (zoomFactor - prevZoom) / zoomFactor;
+                //Vector2 offset = mousePosition - new Vector2(position.width / 2f, position.height / 2f);
+               //panOffset -= offset * (zoomFactor - prevZoom) / zoomFactor;
 
                 e.Use();
             }
