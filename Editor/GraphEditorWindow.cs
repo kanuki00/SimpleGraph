@@ -1,6 +1,6 @@
 /*
-// THIS FILE IS NOT USING FOR BUILD, IT IS ONLY FOR EDITOR.
-// The file is used to create the Graph Editor Window in Unity Editor, e.g. the visual representation of the graph.
+// THIS FILE IS NOT USED FOR BUILD, IT IS ONLY FOR EDITOR.
+// The file builds the Graph Editor Window in Unity Editor, e.g. the visual representation of the graph.
 */
 
 using UnityEngine;
@@ -92,9 +92,12 @@ namespace SimpleGraph
             GUILayout.EndScrollView();
             GUILayout.EndArea();
 
-            // Draw the grid
+            // Draw the grid 
+            /*
             DrawGrid(20, 0.2f, Color.gray);
             DrawGrid(100, 0.4f, Color.gray);
+            */
+
 
             // Save the current GUI matrix
             Matrix4x4 oldMatrix = GUI.matrix;
@@ -190,7 +193,7 @@ namespace SimpleGraph
                 e.Use();
             }
         }
-        private void LoadGraph(GameObject nodesParent)
+        public void LoadGraph(GameObject nodesParent)
         {
             GraphUtility.nodes.Clear();
             if (nodesParent == null)
@@ -204,7 +207,7 @@ namespace SimpleGraph
 
                 if (graphNode != null)
                 {
-                    graphNode.windowRect = new Rect(graphNode.windowRect.x, graphNode.windowRect.y, 200, 150);
+                    graphNode.windowRect = new Rect(graphNode.windowRect.x, graphNode.windowRect.y, 200, 170);
                     GraphUtility.nodes.Add(graphNode);
                 }
             }

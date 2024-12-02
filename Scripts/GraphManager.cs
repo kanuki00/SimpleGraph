@@ -110,11 +110,9 @@ namespace SimpleGraph {
                     if (desiredCompletion) {
                         nextNode.UpdateState("isComplete", false);
                         Debug.Log("Inverter node " + nextNode.nodeName + " state is now FALSE " + nextNode.isCompleted);
-                        break;
                     } else {
                         nextNode.UpdateState("isComplete", true);
                         Debug.Log("Inverter node " + nextNode.nodeName + " state is now TRUE" + nextNode.isCompleted);
-                        break;
                     }
                 }
                 if (nextNode.nodeName == "EndNode") {
