@@ -8,8 +8,19 @@ namespace SimpleGraph {
     public class GraphManager : MonoBehaviour
     {
         public string projectName;
-
+        public AuthenticationType authType; 
+        public CloudserviceLoggerType loggerType;
+        public bool sendDataToCloud; 
+        
         void Start() {
+
+            if (sendDataToCloud)
+            {
+                string json = JsonUtility.ToJson(this, true);
+                string path = Application.dataPath + "/GraphData.json";
+                System.IO.File.WriteAllText(path, json);
+                Debug.Log($"[GraphManager] Data sent to cloud and saved to {path}");
+            }
             
             foreach (Transform child in transform)
             {
@@ -80,11 +91,24 @@ namespace SimpleGraph {
         public void CompleteNode(string nodeName)
         {
             SetNodeCompletion(nodeName, true);
+            if (sendDataToCloud) {
+                sendDataToCloudMethod(nodeName, "completed");
+            }
         }
 
         public void UnCompleteNode(string nodeName)
         {
             SetNodeCompletion(nodeName, false);
+            if (sendDataToCloud) {
+                sendDataToCloudMethod(nodeName, "uncompleted");
+            }
+        }
+
+        public void sendDataToCloudMethod(string nodeName, string nodeState) {
+            string json = JsonUtility.ToJson(this, true);
+            string path = Application.dataPath + "/GraphData.json";
+            System.IO.File.WriteAllText(path, json);
+            Debug.Log($"[GraphManager] Data sent to cloud and saved to {path}");
         }
 
         private bool ArePreviousNodesCompleted(GraphNode node)
@@ -151,6 +175,18 @@ namespace SimpleGraph {
             }
         }
     }
+     public enum AuthenticationType
+    {
+        OAuth,
+        APIKey,
+        BasicAuth
+    }
+
+    public enum CloudserviceLoggerType
+    {
+        Automatic,
+        Manual,
+    }
 
     #if UNITY_EDITOR 
     [CustomEditor(typeof(GraphManager))]
@@ -159,8 +195,11 @@ namespace SimpleGraph {
     public class GraphManagerEditor : Editor
     {
         private string customTextField = "Welcome to the Node Manager! You can find documentation to this project from the project's Github page, and I highly recommend skimming through the source code, as most of it is commented.";
+        private bool showOracleIntegration = false;
+
         public override void OnInspectorGUI()
         {
+            GraphManager graphManager = (GraphManager)target;
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
             EditorGUILayout.Space();
@@ -193,6 +232,38 @@ namespace SimpleGraph {
         
 
             EditorGUILayout.Space();
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
+            EditorGUILayout.Space();
+
+            // Oracle Integration settings. Modify this section to implement other cloud services.
+            showOracleIntegration = EditorGUILayout.Foldout(showOracleIntegration, "Cloud Integration");
+            if (showOracleIntegration)
+            {
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Currently this project only supports the Oracle Cloud integration.", EditorStyles.wordWrappedLabel);
+                EditorGUILayout.Space();
+                graphManager.sendDataToCloud = EditorGUILayout.Toggle("Send data:", graphManager.sendDataToCloud);
+                graphManager.loggerType = (CloudserviceLoggerType)EditorGUILayout.EnumPopup("Logger type:", graphManager.loggerType);
+                EditorGUILayout.Space();
+
+                EditorGUILayout.BeginVertical("box");
+                graphManager.authType = (AuthenticationType)EditorGUILayout.EnumPopup("Authentication:", graphManager.authType);
+                EditorGUILayout.Space();
+                if (graphManager.authType == AuthenticationType.BasicAuth)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.LabelField("Auth link:");
+                    graphManager.projectName = EditorGUILayout.TextField(graphManager.projectName);
+                    EditorGUI.indentLevel--;
+                }
+    
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.Space();
+            }
+
+            // Apply changes to the serializedObject
+            serializedObject.ApplyModifiedProperties();
+
         }
     }
     #endif
