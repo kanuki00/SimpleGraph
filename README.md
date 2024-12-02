@@ -29,3 +29,6 @@ Here's an example of a possible Node logic:
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Dependencies
+QuickOutline: https://github.com/chrisnolet/QuickOutline?tab=readme-ov-file
