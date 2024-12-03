@@ -1,3 +1,7 @@
+/*
+// This script creates the GraphNode class, which then is used to create nodes using the GraphUtility & GraphEditorWindow class.
+*/
+
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.Events;

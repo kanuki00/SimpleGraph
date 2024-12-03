@@ -42,7 +42,6 @@ namespace SimpleGraph {
                     if (node.startOnBegin == true ) {
                         node.UpdateState("isActive", true);
                         CompleteNode(node.nodeName);
-                        Debug.Log($"[GraphManager] Start node {node.nodeName} is now active.");
                         return;
                     } else {
                         Debug.Log("[GraphManager] 'StartNode' waiting for activation.");
@@ -159,18 +158,17 @@ namespace SimpleGraph {
                                 nextNode.UpdateState("isActive", true);
                                 CompleteNode(nextNode.nodeName);
 
-                                Debug.Log("End node " + nextNode.nodeName + " is now active and completed.");
+                                //Debug.Log("End node " + nextNode.nodeName + " is now active and completed.");
                             }
                         }
                     } else {
                         nextNode.UpdateState("isActive", false);
-                        Debug.Log("Node " + nextNode.nodeName + " is now not active.");
+                        //Debug.Log("Node " + nextNode.nodeName + " is now not active.");
                     }
                 }
                 else
                 {
                     nextNode.UpdateState("isActive", true);
-                    Debug.Log("Node " + nextNode.nodeName + " is now active.");
                 }
             }
         }
