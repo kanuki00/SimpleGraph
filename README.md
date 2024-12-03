@@ -2,33 +2,16 @@
 
 This project is a Node Graph Editor for Unity, allowing users to create and manage nodes within a graph structure. The editor provides a visual interface for creating, connecting, and editing nodes.
 
-Here's an example of a possible Node logic:
-
-![alt text](images/graph-logic.png)
-
-## Features
-
-- **Node Creation**: Easily create nodes within the graph.
-- **Node Connection**: Connect nodes to define relationships.
-- **Node Editing**: Edit node properties directly within the editor.
-- **Hierarchy Integration**: Select and edit nodes in the Unity hierarchy.
-
 ## Getting Started
 
-1. **Clone the Repository**: Clone this repository to your local machine.
-2. **Open in Unity**: Open the project in Unity.
-3. **Create a new Gameobject**: Create a new empty gameobject and add the "Graph Manager" script to it. 
+1. **Open in Unity**: Clone the project and add it to the /Assets folder
+2. **Create a new Gameobject**: Create a new empty gameobject and attach the "Graph Manager" script. You cna now open the Graph view using the "Edit Graph" button. 
 
 ## Usage
 
 - **Create Nodes**: Right-click within the editor window to create new nodes.
-- **Connect Nodes**: Click and drag from one node to another to create connections.
-- **Edit Nodes**: Select a node and use the inspector to edit its properties.
-- **Edit in Hierarchy**: Use the "Edit in Hierarchy" button to open the related GameObject in the inspector.
+- **Connect Nodes**: First click the right button on the node you wish to connect. Then click the left button on the node you wish to connect to. 
+- **Edit Nodes**: Select a node and click the "Edit In Hierarchy" to add logic to the node completion. 
 
-## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-## Dependencies
-QuickOutline: https://github.com/chrisnolet/QuickOutline?tab=readme-ov-file
