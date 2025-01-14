@@ -168,7 +168,9 @@ namespace SimpleGraph {
                 }
                 else
                 {
-                    nextNode.UpdateState("isActive", true);
+                    if (ArePreviousNodesCompleted(nextNode)) {
+                        nextNode.UpdateState("isActive", true);
+                    } 
                 }
             }
         }
