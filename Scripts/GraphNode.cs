@@ -10,10 +10,18 @@ using UnityEditor;
 
 namespace SimpleGraph
 {
+    public enum GraphNodeType
+    {
+        StartNode,
+        TaskNode,
+        InverterNode,
+        EndNode
+    }
     public class GraphNode : MonoBehaviour
     {
         public Rect windowRect;
         public string nodeName;
+        public GraphNodeType nodeType;
         public List<GraphNode> previousNodes = new List<GraphNode>(); // Add list for previous nodes
         public List<GraphNode> nextNodes = new List<GraphNode>(); // Add list for next nodes
 

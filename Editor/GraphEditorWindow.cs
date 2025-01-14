@@ -221,7 +221,7 @@ namespace SimpleGraph
             Repaint();
         }
 
-        private GraphNode CreateNode(string nodeName, Vector2 position)
+        private GraphNode CreateNode(string nodeName, GraphNodeType type, Vector2 position)
         {
             // Create a new GameObject
             GameObject nodeObject = new GameObject(nodeName);
@@ -232,6 +232,7 @@ namespace SimpleGraph
             GraphNode newNode = nodeObject.AddComponent<GraphNode>();
             newNode.windowRect = new Rect(position.x, position.y, 200, 170);
             newNode.nodeName = nodeName;
+            newNode.nodeType = type;
 
             // Add the new node to the GraphUtility nodes list
             GraphUtility.nodes.Add(newNode);
@@ -264,10 +265,10 @@ namespace SimpleGraph
                 }
                 else
                 {
-                    menu.AddItem(new GUIContent("Add Start Node"), false, () => CreateNode("StartNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add Inverter Node"), false, () => CreateNode("InverterNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add Task Node"), false, () => CreateNode("TaskNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add End Node"), false, () => CreateNode("EndNode", e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Start Node"), false, () => CreateNode("StartNode", GraphNodeType.StartNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Inverter Node"), false, () => CreateNode("InverterNode", GraphNodeType.InverterNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Task Node"), false, () => CreateNode("TaskNode", GraphNodeType.TaskNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add End Node"), false, () => CreateNode("EndNode", GraphNodeType.EndNode, e.mousePosition));
                 }
 
                 menu.ShowAsContext();

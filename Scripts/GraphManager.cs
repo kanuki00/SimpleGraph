@@ -26,7 +26,7 @@ namespace SimpleGraph {
             {
                 GraphNode node = child.GetComponent<GraphNode>();
                 
-                if (node.nodeName == "InverterNode") {
+                if (node.nodeType == GraphNodeType.InverterNode) {
                     node.UpdateState("isActive", true);
                     node.UpdateState("isComplete", true);
                 }
@@ -37,7 +37,7 @@ namespace SimpleGraph {
                 GraphNode node = child.GetComponent<GraphNode>();
         
 
-                if (node != null && node.nodeName == "StartNode")
+                if (node != null && node.nodeType == GraphNodeType.StartNode)
                 {
                     if (node.startOnBegin == true ) {
                         node.UpdateState("isActive", true);
@@ -69,7 +69,7 @@ namespace SimpleGraph {
                         }
                         else
                         {
-                            if (nodeName == "InverterNode") {
+                            if (node.nodeType == GraphNodeType.InverterNode) {
                                 ChangeNextNodeState(node, desiredCompletion);
                                 break;
                             }
@@ -128,7 +128,7 @@ namespace SimpleGraph {
             //Debug.Log($"[GraphManager] Activating next nodes for node: {node.nodeName}");
             foreach (GraphNode nextNode in node.nextNodes)
             {
-                if (nextNode.nodeName == "InverterNode")
+                if (nextNode.nodeType == GraphNodeType.InverterNode)
                 {
                     if (desiredCompletion) {
                         nextNode.UpdateState("isComplete", false);
@@ -138,14 +138,14 @@ namespace SimpleGraph {
                         Debug.Log("Inverter node " + nextNode.nodeName + " state is now TRUE" + nextNode.isCompleted);
                     }
                 }
-                if (nextNode.nodeName == "EndNode") {
+                if (nextNode.nodeType == GraphNodeType.EndNode) {
                     if (desiredCompletion) {
                         if (nextNode.requireAllCompleted) {
                             bool allNodesCompleted = true;
                             foreach (Transform child in transform)
                             {
                                 GraphNode checkNode = child.GetComponent<GraphNode>();
-                                if (checkNode != null && checkNode.nodeName != "InverterNode" && checkNode.nodeName != "EndNode" && !checkNode.isCompleted)
+                                if (checkNode != null && checkNode.nodeType != GraphNodeType.InverterNode && checkNode.nodeType != GraphNodeType.EndNode && !checkNode.isCompleted)
                                 {
                                     allNodesCompleted = false;
                                     Debug.Log("Not all nodes are completed!");
@@ -168,7 +168,10 @@ namespace SimpleGraph {
                 }
                 else
                 {
-                    nextNode.UpdateState("isActive", true);
+                    if (ArePreviousNodesCompleted(nextNode))
+                    {
+                        nextNode.UpdateState("isActive", true);
+                    }
                 }
             }
         }
