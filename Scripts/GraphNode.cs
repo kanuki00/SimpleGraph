@@ -14,6 +14,7 @@ namespace SimpleGraph
     {
         public Rect windowRect;
         public string nodeName;
+        public NodeType nodeType;
         public List<GraphNode> previousNodes = new List<GraphNode>(); // Add list for previous nodes
         public List<GraphNode> nextNodes = new List<GraphNode>(); // Add list for next nodes
 
@@ -162,6 +163,14 @@ namespace SimpleGraph
         {
             this.gameObject.name = nodeName;
         }
+    }
+    public enum NodeType
+    {
+        StartNode,
+        InverterNode,
+        TaskNode,
+        EndNode,
+        Unknown
     }
 
     #if UNITY_EDITOR
