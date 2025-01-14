@@ -187,12 +187,10 @@ namespace SimpleGraph
     {
         private string customTextField = "Add the task node functionality below using UnityEvents.";
         private bool showDefaultInspector = false;
-        private SerializedProperty startOnBeginProperty;
         private SerializedProperty requireAllCompleted;
 
         private void OnEnable()
         {
-            startOnBeginProperty = serializedObject.FindProperty("startOnBegin");
             requireAllCompleted = serializedObject.FindProperty("requireAllCompleted");
         }
 
@@ -207,11 +205,6 @@ namespace SimpleGraph
             EditorGUILayout.Space();
 
             GraphNode graphNode = (GraphNode)target;
-
-            if (graphNode.nodeName == "StartNode") {
-                EditorGUILayout.PropertyField(startOnBeginProperty, new GUIContent("Start On Begin"));
-                EditorGUILayout.Space(10);
-            }
 
             if (graphNode.nodeName == "EndNode") {
                 EditorGUILayout.PropertyField(requireAllCompleted, new GUIContent("Require all nodes to be completed"));
