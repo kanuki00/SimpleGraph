@@ -22,7 +22,7 @@ namespace SimpleGraph
         private Rect _zoomArea;
         private const float zoomAreaScale = 10.0f;
         private Vector2 panOffset = Vector2.zero; 
-    private static GameObject tempNodesParent;
+        private static GameObject tempNodesParent;
 
 
         public static void ShowEditor(GameObject nodesParent)
@@ -141,6 +141,7 @@ namespace SimpleGraph
             GUI.BeginGroup(zoomedArea);
         }
 
+        // NOT CURRENTLY IN USE --> FOR THE NEXT VARUSVEIJARI
         private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
         {
             float scaledGridSpacing = gridSpacing * zoomFactor;

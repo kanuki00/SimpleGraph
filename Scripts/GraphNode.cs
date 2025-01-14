@@ -56,14 +56,19 @@ namespace SimpleGraph
         {
             switch (activationType)
             {
-                case "isActive":
-                    isActive = state;
-                    TriggerActiveEvent();
-                    break;
-                case "isComplete":
-                    isCompleted = state;
-                    TriggerCompletionEvent();
-                    break;
+            case "isActive":
+                isActive = state;
+                Debug.Log($"Node {nodeName} is now active: {isActive}");
+                TriggerActiveEvent();
+                break;
+            case "isComplete":
+                isCompleted = state;
+                Debug.Log($"Node {nodeName} is now completed: {isCompleted}");
+                TriggerCompletionEvent();
+                break;
+            default:
+                Debug.LogWarning($"Unknown activation type: {activationType}");
+                break;
             }
         }
 
@@ -105,37 +110,40 @@ namespace SimpleGraph
             GUILayout.BeginVertical();
             GUILayout.Space(10); 
 
-            if (nodeName == "StartNode" || nodeName == "EndNode" || nodeName == "InverterNode") {
+            switch (nodeType)
+            {
+                case NodeType.StartNode:
+                case NodeType.EndNode:
+                case NodeType.InverterNode:
+                    GUILayout.Label("Node Type: " + nodeType);
+                    GUILayout.Space(10); 
+                    if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
+                    {
+                        #if UNITY_EDITOR
+                        UnityEditor.Selection.activeGameObject = this.gameObject;
+                        #endif
+                    }
+                    break;
 
-                GUILayout.Label("Node Type: " + nodeName);
-                GUILayout.Space(10); 
-                if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
-                {
-                    #if UNITY_EDITOR
-                    UnityEditor.Selection.activeGameObject = this.gameObject;
-                    #endif
-                }
+                default:
+                    GUILayout.Label("Node Name:");
+                    string newNodeName = GUILayout.TextField(nodeName, GUILayout.Width(150));
+                    if (newNodeName != nodeName)
+                    {
+                        nodeName = newNodeName;
+                        UpdateNodeNameInHierarchy();
+                    }
 
+                    GUILayout.Space(10);
 
-            } else {
-
-                GUILayout.Label("Node Name:");
-                string newNodeName = GUILayout.TextField(nodeName, GUILayout.Width(150));
-                if (newNodeName != nodeName)
-                {
-                    nodeName = newNodeName;
-                    UpdateNodeNameInHierarchy();
-                }
-
-                GUILayout.Space(10);
-
-                // Add the "Edit in Hierarchy" button
-                if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
-                {
-                    #if UNITY_EDITOR
-                    UnityEditor.Selection.activeGameObject = this.gameObject;
-                    #endif
-                }
+                    // Add the "Edit in Hierarchy" button
+                    if (GUILayout.Button("Edit in Hierarchy", GUILayout.Height(40),  GUILayout.Width(150)))
+                    {
+                        #if UNITY_EDITOR
+                        UnityEditor.Selection.activeGameObject = this.gameObject;
+                        #endif
+                    }
+                    break;
             }
 
             GUILayout.Space(10);
@@ -169,8 +177,7 @@ namespace SimpleGraph
         StartNode,
         InverterNode,
         TaskNode,
-        EndNode,
-        Unknown
+        EndNode
     }
 
     #if UNITY_EDITOR
