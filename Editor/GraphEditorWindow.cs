@@ -24,6 +24,7 @@ namespace SimpleGraph
         private Vector2 panOffset = Vector2.zero; 
         private static GameObject tempNodesParent;
 
+
         public static void ShowEditor(GameObject nodesParent)
         {
             tempNodesParent = nodesParent;
@@ -119,6 +120,8 @@ namespace SimpleGraph
                 );
             }
 
+
+
             foreach (GraphNode node in GraphUtility.nodes)
             {
                 foreach (GraphNode nextNode in node.nextNodes)
@@ -138,6 +141,7 @@ namespace SimpleGraph
             GUI.BeginGroup(zoomedArea);
         }
 
+        // NOT CURRENTLY IN USE --> FOR THE NEXT VARUSVEIJARI
         private void DrawGrid(float gridSpacing, float gridOpacity, Color gridColor)
         {
             float scaledGridSpacing = gridSpacing * zoomFactor;
@@ -221,17 +225,20 @@ namespace SimpleGraph
             Repaint();
         }
 
-        private GraphNode CreateNode(string nodeName, Vector2 position)
+        private GraphNode CreateNode(NodeType nodeType, Vector2 position)
         {
             // Create a new GameObject
-            GameObject nodeObject = new GameObject(nodeName);
+            GameObject nodeObject = new GameObject(nodeType.ToString());
             nodeObject.transform.SetParent(nodesParent.transform);
             nodeObject.transform.position = position;
 
             // Add the GraphNode component
             GraphNode newNode = nodeObject.AddComponent<GraphNode>();
             newNode.windowRect = new Rect(position.x, position.y, 200, 170);
-            newNode.nodeName = nodeName;
+            newNode.nodeName = nodeType.ToString();
+
+            // Set the node type
+            newNode.nodeType = nodeType;
 
             // Add the new node to the GraphUtility nodes list
             GraphUtility.nodes.Add(newNode);
@@ -264,15 +271,16 @@ namespace SimpleGraph
                 }
                 else
                 {
-                    menu.AddItem(new GUIContent("Add Start Node"), false, () => CreateNode("StartNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add Inverter Node"), false, () => CreateNode("InverterNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add Task Node"), false, () => CreateNode("TaskNode", e.mousePosition));
-                    menu.AddItem(new GUIContent("Add End Node"), false, () => CreateNode("EndNode", e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Start Node"), false, () => CreateNode(NodeType.StartNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Inverter Node"), false, () => CreateNode(NodeType.InverterNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add Task Node"), false, () => CreateNode(NodeType.TaskNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Add End Node"), false, () => CreateNode(NodeType.EndNode, e.mousePosition));
                 }
 
                 menu.ShowAsContext();
                 e.Use();
             }
         }
+
     }
 }
