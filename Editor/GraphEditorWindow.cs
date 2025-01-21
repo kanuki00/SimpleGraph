@@ -246,6 +246,31 @@ namespace SimpleGraph
             return newNode;
         }
 
+        private void DestroyFailedConnections()
+        {
+            foreach (GraphNode node in GraphUtility.nodes)
+            {
+            // Check previous nodes
+            for (int i = node.previousNodes.Count - 1; i >= 0; i--)
+            {
+                if (node.previousNodes[i] == null || !node.previousNodes[i].nextNodes.Contains(node))
+                {
+                node.previousNodes.RemoveAt(i);
+                }
+            }
+
+            // Check next nodes
+            for (int i = node.nextNodes.Count - 1; i >= 0; i--)
+            {
+                if (node.nextNodes[i] == null || !node.nextNodes[i].previousNodes.Contains(node))
+                {
+                node.nextNodes.RemoveAt(i);
+                }
+            }
+            }
+        }
+
+
         /*
         // This function creates the "context menu", which is the menu that appears when you right-click on the graph editor window.
         */
@@ -275,6 +300,7 @@ namespace SimpleGraph
                     menu.AddItem(new GUIContent("Add Inverter Node"), false, () => CreateNode(NodeType.InverterNode, e.mousePosition));
                     menu.AddItem(new GUIContent("Add Task Node"), false, () => CreateNode(NodeType.TaskNode, e.mousePosition));
                     menu.AddItem(new GUIContent("Add End Node"), false, () => CreateNode(NodeType.EndNode, e.mousePosition));
+                    menu.AddItem(new GUIContent("Destroy failed connnections"), false, () => DestroyFailedConnections());
                 }
 
                 menu.ShowAsContext();
