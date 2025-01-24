@@ -126,13 +126,13 @@ namespace SimpleGraph
             {
                 foreach (GraphNode nextNode in node.nextNodes)
                 {
-                    float horizontalNodesDist = nextNode.windowRect.x - node.windowRect.x;
                     // Start from the right center
                     Vector3 startPos = new Vector3(node.windowRect.x + node.windowRect.width, node.windowRect.y + (node.windowRect.height / 2), 0); 
                     // End at the left center
                     Vector3 endPos = new Vector3(nextNode.windowRect.x, nextNode.windowRect.y + nextNode.windowRect.height / 2, 0); 
-                    Vector3 startTangent = startPos + Vector3.right * (Mathf.Abs(horizontalNodesDist) / 4);
-                    Vector3 endTangent = endPos + Vector3.left * (Mathf.Abs(horizontalNodesDist) / 4);
+                    float horizontalNodesDist = endPos.x - startPos.x;
+                    Vector3 startTangent = startPos + Vector3.right * (Mathf.Abs(horizontalNodesDist) / 2);
+                    Vector3 endTangent = endPos + Vector3.left * (Mathf.Abs(horizontalNodesDist) / 2);
 
                     Handles.DrawBezier(startPos, endPos, startTangent, endTangent, Color.white, null, 3f);
                 }
