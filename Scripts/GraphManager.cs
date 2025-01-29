@@ -24,6 +24,10 @@ namespace SimpleGraph {
         {
             if (node.isActive && ArePreviousNodesCompleted(node))
             {
+                if (node.isCompleted && !desiredCompletion)
+                {
+                    node.UpdateState("isRevoke", desiredCompletion);
+                }
                 node.UpdateState("isComplete", desiredCompletion);
                 foreach (GraphNode nextNode in node.nextNodes)
                 {
@@ -84,7 +88,7 @@ namespace SimpleGraph {
         {
             SetNodeCompletion(selectedNode, true);
         }
-        public void UnCompleteNode(GraphNode node)
+        public void RevokeNode(GraphNode node)
         {
             SetNodeCompletion(node, false);
         }
