@@ -233,7 +233,7 @@ namespace SimpleGraph
             
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("When node completion is Revoked");
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("onCompletionEvent"), new GUIContent("onRevokeEvent"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("onRevokeEvent"), new GUIContent("onRevokeEvent"));
 
             serializedObject.ApplyModifiedProperties();
             
