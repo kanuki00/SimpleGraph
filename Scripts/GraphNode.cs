@@ -41,6 +41,7 @@ namespace SimpleGraph
         public NodeEvent onActiveEvent;
         [HideInInspector]
         public NodeEvent onCompletionEvent;
+        public NodeEvent onRevokeEvent;
         
 
         public void TriggerActiveEvent()
@@ -51,6 +52,11 @@ namespace SimpleGraph
         public void TriggerCompletionEvent()
         {
             onCompletionEvent?.Invoke(this);
+        }
+
+        public void TriggerRevokeEvent()
+        {
+            onRevokeEvent?.Invoke(this);
         }
 
         public void UpdateState(string activationType, bool state)
@@ -66,6 +72,11 @@ namespace SimpleGraph
                 isCompleted = state;
                 Debug.Log($"Node {nodeName} is now completed: {isCompleted}");
                 TriggerCompletionEvent();
+                break;
+            case "isRevoke":
+                isActive = state;
+                Debug.Log($"Node {nodeName} is now revoked: {isActive}");
+                TriggerRevokeEvent();
                 break;
             default:
                 Debug.LogWarning($"Unknown activation type: {activationType}");
@@ -220,6 +231,10 @@ namespace SimpleGraph
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("When node is Completed");
             EditorGUILayout.PropertyField(serializedObject.FindProperty("onCompletionEvent"), new GUIContent("onCompletionEvent"));
+            
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("When node completion is Revoked");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("onRevokeEvent"), new GUIContent("onRevokeEvent"));
 
             serializedObject.ApplyModifiedProperties();
             
