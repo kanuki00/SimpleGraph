@@ -11,19 +11,26 @@ using System.IO;
 
 namespace SimpleGraph
 {
+    [System.Serializable]
     public class GraphEditorWindow : EditorWindow
     {
+        [SerializeField]
         private Vector2 scrollPos;
+        [SerializeField]
         private GameObject nodesParent;
-        
+        [SerializeField]
         private bool isConnecting = false;
+        [SerializeField]
         private GraphNode startNode = null;
-        private float zoomFactor = 1.0f; 
+        [SerializeField]
+        private float zoomFactor = 1.0f;
+        [SerializeField]
         private Rect _zoomArea;
+        [SerializeField]
         private const float zoomAreaScale = 10.0f;
-        private Vector2 panOffset = Vector2.zero; 
+        [SerializeField]
+        private Vector2 panOffset = Vector2.zero;
         private static GameObject tempNodesParent;
-
 
         public static void ShowEditor(GameObject nodesParent)
         {
@@ -33,13 +40,28 @@ namespace SimpleGraph
         }
 
         private void OnEnable()
-        {   
-            nodesParent = tempNodesParent;
-            tempNodesParent = null;
+        {
+            if (tempNodesParent != null)
+            {
+                nodesParent = tempNodesParent;
+                tempNodesParent = null;
+            }
 
             LoadGraph(nodesParent);
             GraphNode.OnSetStartNode += SetStartNode;
             GraphNode.OnSetEndNode += SetEndNode;
+            EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
+        }
+        private void OnPlayModeStateChanged(PlayModeStateChange state)
+        {
+            if (state == PlayModeStateChange.EnteredPlayMode || state == PlayModeStateChange.ExitingPlayMode)
+            {
+                if (nodesParent != null)
+                {
+                    LoadGraph(nodesParent);
+                    Repaint();
+                }
+            }
         }
 
         private void SetStartNode(GraphNode node)

@@ -10,6 +10,7 @@ using UnityEditor;
 
 namespace SimpleGraph
 {
+    [System.Serializable]
     public class GraphNode : MonoBehaviour
     {
         public Rect windowRect;

@@ -5,6 +5,7 @@ using System.Reflection;
 using System;
 
 namespace SimpleGraph {
+    [System.Serializable]
     public class GraphManager : MonoBehaviour
     {
         public string projectName;
