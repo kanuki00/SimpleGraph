@@ -24,9 +24,7 @@ Matr. Kujala - Merisk 2/24
 
 ## Getting Started
 
-SimpleGraph is a Unity tool designed to streamline the creation of linear and non-linear exercises. This software provides a user-friendly visual interface for a node-based state system, enabling the development of logic-driven structures with ease.
-
-SimpleGraph was developed as a replacement for Virtual Dawn by Matr. Kujala. The Finnish Defence Forces (FDF) hold the copyright for this software. ❤️
+SimpleGraph is a Unity tool designed to streamline the creation of linear and non-linear exercises. This software provides a user-friendly visual interface for a node-based state system, enabling the development of logic-driven structures with ease. ❤️
 
 ---
 
