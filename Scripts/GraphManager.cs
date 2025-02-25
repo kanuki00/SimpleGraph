@@ -81,7 +81,7 @@ namespace SimpleGraph {
                         break;
                     }
                     else if (!desiredCompletion) {
-                        node.UpdateState("isActive", desiredCompletion);
+                        node.UpdateState("isDeactive", desiredCompletion);
                         break;
                     }
                     else  {

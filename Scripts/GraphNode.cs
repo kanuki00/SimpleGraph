@@ -39,16 +39,21 @@ namespace SimpleGraph
 
         [HideInInspector]
         public NodeEvent onActiveEvent;
+        public NodeEvent onDeactiveEvent;
+        
         [HideInInspector]
         public NodeEvent onCompletionEvent;
         public NodeEvent onRevokeEvent;
-        
+       
 
         public void TriggerActiveEvent()
         {
             onActiveEvent?.Invoke(this);
         }
 
+        public void TriggerDeactiveEvent() {
+            onDeactiveEvent?.Invoke(this);
+        }
         public void TriggerCompletionEvent()
         {
             onCompletionEvent?.Invoke(this);
@@ -68,13 +73,18 @@ namespace SimpleGraph
                 Debug.Log($"Node {nodeName} is now active: {isActive}");
                 TriggerActiveEvent();
                 break;
+            case "isDeactive":
+                isActive = state;
+                Debug.Log($"Node {nodeName} is now deactive: {isActive}");
+                TriggerDeactiveEvent();
+                break;
             case "isComplete":
                 isCompleted = state;
                 Debug.Log($"Node {nodeName} is now completed: {isCompleted}");
                 TriggerCompletionEvent();
                 break;
             case "isRevoke":
-                isActive = state;
+                isCompleted = state;
                 Debug.Log($"Node {nodeName} is now revoked: {isActive}");
                 TriggerRevokeEvent();
                 break;
@@ -227,6 +237,10 @@ namespace SimpleGraph
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("When node is Activated");
             EditorGUILayout.PropertyField(serializedObject.FindProperty("onActiveEvent"), new GUIContent("onActiveEvent"));
+            
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("When node is Deactivated");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("onDeactiveEvent"), new GUIContent("onDeactiveEvent"));
 
             EditorGUILayout.Space();
             EditorGUILayout.LabelField("When node is Completed");
