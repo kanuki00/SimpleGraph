@@ -18,6 +18,11 @@ namespace SimpleGraph {
                 {
                     node.UpdateState("isActive", true);
                 }
+                if (node.nodeType == NodeType.InverterNode)
+                {
+                    node.UpdateState("isActive", true);
+                    node.UpdateState("isComplete", true);
+                }
             }
         }
 
@@ -75,8 +80,11 @@ namespace SimpleGraph {
                         node.UpdateState("isActive", desiredCompletion);
                         break;
                     }
-                    else
-                    {
+                    else if (!desiredCompletion) {
+                        node.UpdateState("isActive", desiredCompletion);
+                        break;
+                    }
+                    else  {
                         Debug.LogWarning($"[GraphManager] Node '{node.nodeType}' is not active or previous nodes are not completed.");
                     }
                     break; 
