@@ -33,8 +33,11 @@ namespace SimpleGraph {
                 if (node.isCompleted && !desiredCompletion)
                 {
                     node.UpdateState("isRevoke", desiredCompletion);
+                } else if (!node.isCompleted && desiredCompletion)
+                {
+                    node.UpdateState("isComplete", desiredCompletion);
                 }
-                node.UpdateState("isComplete", desiredCompletion);
+                
                 foreach (GraphNode nextNode in node.nextNodes)
                 {
                     ChangeNextNodeState(nextNode, desiredCompletion);
