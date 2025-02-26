@@ -116,10 +116,10 @@ namespace SimpleGraph
             GUILayout.EndArea();
 
             // Draw the grid 
-            /*
+            
             DrawGrid(20, 0.2f, Color.gray);
             DrawGrid(100, 0.4f, Color.gray);
-            */
+            
 
 
             // Save the current GUI matrix
@@ -179,22 +179,22 @@ namespace SimpleGraph
 
             // Adjust the pan offset to keep the grid centered
             Vector2 adjustedPanOffset = panOffset * zoomFactor - center * (zoomFactor - 1);
-
+            
             int widthDivs = Mathf.CeilToInt(position.width / scaledGridSpacing);
             int heightDivs = Mathf.CeilToInt(position.height / scaledGridSpacing);
 
             Handles.BeginGUI();
             Handles.color = new Color(gridColor.r, gridColor.g, gridColor.b, gridOpacity);
-
+            // Add random spacing because why not
             for (int i = 0; i <= widthDivs; i++)
             {
-                float x = i * scaledGridSpacing - offset.x + adjustedPanOffset.x;
+                float x = i * scaledGridSpacing - offset.x + adjustedPanOffset.x-250;
                 Handles.DrawLine(new Vector3(x, 0, 0), new Vector3(x, position.height, 0));
             }
-
+            
             for (int j = 0; j <= heightDivs; j++)
             {
-                float y = j * scaledGridSpacing - offset.y + adjustedPanOffset.y;
+                float y = j * scaledGridSpacing - offset.y + adjustedPanOffset.y-250;
                 Handles.DrawLine(new Vector3(0, y, 0), new Vector3(position.width, y, 0));
             }
 
