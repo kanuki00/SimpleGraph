@@ -1,8 +1,5 @@
 # SimpleGraph Documentation
 v.1.0  
-Matr. Kujala - Merisk 2/24
-
-[GitHub Repository](https://github.com/kujal/SimpleGraph)
 
 ---
 
@@ -24,26 +21,14 @@ Matr. Kujala - Merisk 2/24
 
 ## Getting Started
 
-SimpleGraph is a Unity tool designed to streamline the creation of linear and non-linear exercises. This software provides a user-friendly visual interface for a node-based state system, enabling the development of logic-driven structures with ease. ❤️
+SimpleGraph is a set of Unity scripts that simplifies the process of building both linear and non-linear task trees. It features a user-friendly, node-based interface that makes it easy to create logic-driven workflows. 
 
 ---
 
 ## Installation
 
-### 1. Download the Code
-Obtain the code from GitHub or another hosting platform.
-
-### 2. Maintain Folder Structure
-Ensure the folder named `SimpleGraph` remains intact. Do not rename or alter the folder structure.
-
-### 3. Add to Unity Project
+### Add to Unity Project
 Place the `SimpleGraph` folder inside the `Assets` folder of your Unity project.
-
-### 4. Verify Compilation
-Unity should automatically compile the contents of the SimpleGraph folder.  
-If the folder does not compile:
-- Start and stop Play mode in Unity.
-- Double-check that the folder is correctly placed in the intended Unity project.
 
 ---
 
@@ -83,10 +68,6 @@ When you create a node in the Graph Window, a corresponding physical GameObject 
 **Important:**
 - Do not manually move the nodes away from their parent object.
 - Avoid adding or relocating nodes within the hierarchy.
-
-A properly structured exercise should resemble the example shown below:
-
-![Example](example.png) *(Insert your example image here)*
 
 ---
 
@@ -135,14 +116,3 @@ This event is only triggered when `GraphManager.CompleteNode` is explicitly call
 | **Timer Trigger** | Triggers a UnityEvent after a specific time period. Also handy for debugging purposes. |
 
 ---
-
-## Workflow
-
-*(TODO)*
-
----
-
-## Integration to the Cloud
-
-*(TODO)*
-
