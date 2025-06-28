@@ -1,7 +1,6 @@
 # SimpleGraph Documentation
-v.1.0  
 
----
+SimpleGraph is a set of Unity scripts that simplifies the process of building both linear and non-linear task trees. It features a user-friendly, node-based interface that makes it easy to create logic-driven workflows. 
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -17,20 +16,12 @@ v.1.0
 - [Workflow](#workflow)
 - [Integration to the Cloud](#integration-to-the-cloud)
 
----
-
-## Getting Started
-
-SimpleGraph is a set of Unity scripts that simplifies the process of building both linear and non-linear task trees. It features a user-friendly, node-based interface that makes it easy to create logic-driven workflows. 
-
----
 
 ## Installation
 
 ### Add to Unity Project
 Place the `SimpleGraph` folder inside the `Assets` folder of your Unity project.
 
----
 
 ## Create a New Graph
 
@@ -43,7 +34,6 @@ Drag and drop the `GraphManager` script onto the GameObject or use the "Add Comp
 ### 3. Edit the Graph
 In the GameObject’s Inspector window, click the **Edit Graph** button to start creating your graph.
 
----
 
 ## Create Node Logic
 
@@ -58,7 +48,6 @@ In the GameObject’s Inspector window, click the **Edit Graph** button to start
 ### 3. Troubleshooting Connections
 In rare cases, connections may not register immediately. If this happens, simply try the process again.
 
----
 
 ## Usage
 
@@ -68,8 +57,6 @@ When you create a node in the Graph Window, a corresponding physical GameObject 
 **Important:**
 - Do not manually move the nodes away from their parent object.
 - Avoid adding or relocating nodes within the hierarchy.
-
----
 
 ### Completing or Uncompleting Nodes
 
@@ -86,7 +73,6 @@ For example, a **Timer Trigger** can be used to manage node completion.
 4. In the box that appears, drag and drop the task you wish to mark as complete.
 5. When the UnityEvent is triggered, the selected node will be marked as completed.
 
----
 
 ### Triggering Nodes and UnityEvents
 
@@ -96,7 +82,6 @@ This event is triggered automatically when all immediate previous nodes connecte
 #### `onCompletionEvent`:
 This event is only triggered when `GraphManager.CompleteNode` is explicitly called for that node.
 
----
 
 ## Nodes
 
@@ -107,12 +92,9 @@ This event is only triggered when `GraphManager.CompleteNode` is explicitly call
 | **InverterNode**| “Inverts” the state of the node it has been attached to. Acts as an “inverter” and can only be attached to a single node. Completes automatically.|
 | **EndNode**    | The last node of a node tree. Should be used to finish an exercise.                                                                                |
 
----
-
 ## Triggers
 
 | **Trigger Type** | **Functionality**                                                        |
 |-------------------|--------------------------------------------------------------------------|
 | **Timer Trigger** | Triggers a UnityEvent after a specific time period. Also handy for debugging purposes. |
 
----
