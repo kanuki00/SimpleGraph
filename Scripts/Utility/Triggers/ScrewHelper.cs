@@ -8,6 +8,8 @@ Only works with the BNG framework
 and Steering Wheel script attached in the same component
 */
 
+#if SteeringWheel
+
 namespace BNG {
     public class ScrewHelper : MonoBehaviour {
 
@@ -170,3 +172,5 @@ namespace BNG {
         }
     }
 }
+
+#endif
